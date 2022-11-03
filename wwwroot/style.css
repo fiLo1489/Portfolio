@@ -1,0 +1,180 @@
+@font-face {
+    font-family: "Font";
+    src: url("font/font.woff");
+}
+
+:root
+{
+    --bright: #f0f0f0;
+    --dark: #282828;
+    --heavy: 50px 5vw;
+    --medium: 30px;
+    --light: 12px;
+}
+
+img
+{
+    height: auto;
+    width: 100%;
+}
+
+html, body
+{
+    font-family: "Font" !important;
+    scroll-behavior: smooth !important;
+}
+
+.title-style
+{
+    height: calc(100vh - 71px);
+    min-height: calc(100vh - 71px);
+}
+
+.separator-style
+{
+    height: 17.9vh;
+    min-height: 17.9vh;
+}
+
+.background-format
+{
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    display: flex;
+}
+
+.heavy-border
+{
+    border-width: 1.2vmin;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.light-border
+{
+    border-width: 2.5px;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.bright-border
+{
+    border-color: var(--bright) !important;
+    border-style: solid;
+}
+
+.dark-border
+{
+    background: var(--dark) !important;
+    border-style: solid;
+}
+
+.dark-background
+{
+    background: var(--dark) !important;
+}
+
+ .bright-background
+{
+    background: var(--bright) !important;
+}
+
+.dark-color
+{
+    color: var(--dark) !important;
+    text-decoration: none;
+}
+
+.bright-color
+{
+    color: var(--bright) !important;
+    text-decoration: none;
+}
+
+.size-text
+{
+    font-size: 15vmin;
+}
+
+.heavy-text
+{
+    font-size: 45px;
+}
+
+.light-text
+{
+    font-size: 20px;
+}
+
+.dark-color:hover[href], .dark-color:focus[href]
+{
+    text-decoration: underline;
+}
+
+.bright-color:hover[href], .bright-color:focus[href]
+{
+     text-decoration: underline;
+}
+
+.padding-light
+{
+    padding: var(--light);
+}
+
+.padding-medium
+{
+    padding: var(--medium);
+}
+
+.padding-heavy
+{
+    padding: var(--heavy);
+}
+
+.margin-heavy
+{
+    margin: var(--heavy);
+}
+
+.margin-light
+{
+    margin: var(--light);
+}
+
+.margin-medium
+{
+    margin: var(--medium);
+}
+
+.title-overlay
+{
+    width: 65%;
+    height: 40vh;
+    margin: auto;
+    background: var(--dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-item
+{
+    text-align: center;
+}
+
+.navbar-toggler
+{
+    border: none !important;
+}
+
+.navbar-toggler
+{
+    border: none !important;
+}
+
+.navbar-toggler:focus,  .navbar-toggler:active
+{
+    box-shadow: none;
+}

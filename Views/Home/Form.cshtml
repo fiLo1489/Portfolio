@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Formulár";
+}
+
+<component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
+
+<div class="dark-background padding-heavy text-center light-text bright-color">
+    <h1 class="heavy-text mb-3">
+        MÁM ZÁUJEM O FOTENIE
+    </h1>
+    <p class="light-text padding-medium">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus ex quis dolor ullamcorper, quis
+        hendrerit est rutrum. Morbi quis ex luctus, mollis ipsum id, lobortis metus. Vestibulum nec arcu mi.
+        In at sem nibh. In pulvinar mollis lacus, ac hendrerit diam convallis sit amet.
+    </p>
+    <form>
+        <div class="form-group row padding-light">
+            <label for="name" class="col-lg-2 col-form-label">Meno</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" id="name">
+            </div>
+        </div>
+        <div class="form-group row padding-light">
+            <label for="surname" class="col-lg-2 col-form-label">Priezvisko</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" id="surname">
+            </div>
+        </div>
+        <div class="form-group row padding-light">
+            <label for="category" class="col-lg-2 col-form-label">Kategória</label>
+            <div class="col-lg-10">
+                <select class="form-control light-border bright-border dark-background bright-color rounded-0" id="category">
+                    <option value="1">svadby</option>
+                    <option value="2">podujatia</option>
+                    <option value="3">vozidlá</option>
+                    <option value="3">príroda</option>
+                    <option value="3">iné</option>
+
+                    <!--TODO DBS generovanie-->
+                </select>
+            </div>
+        </div>
+        <div class="form-group row padding-light">
+            <label for="description" class="col-lg-2 col-form-label">Popis</label>
+            <div class="col-lg-10">
+                <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" id="description" rows="5"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+
+<component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
