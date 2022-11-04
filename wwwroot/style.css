@@ -76,7 +76,7 @@ html, body
     background: var(--dark) !important;
 }
 
- .bright-background
+.bright-background
 {
     background: var(--bright) !important;
 }
@@ -177,4 +177,8 @@ html, body
 .navbar-toggler:focus,  .navbar-toggler:active
 {
     box-shadow: none;
+}
+
+.highlight:hover {
+    background: #505050 !important;
 }
