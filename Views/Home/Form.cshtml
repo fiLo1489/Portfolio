@@ -5,7 +5,7 @@
     List<string> categories = new List<string>();
 
     string query = "select * from CATEGORIES";
-    string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+    string connectionString = "Data Source=localhost;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password";
 
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
