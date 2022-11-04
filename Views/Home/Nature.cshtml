@@ -1,5 +1,8 @@
-﻿@{
+﻿@using SemestralnaPraca.Controllers
+@{
     ViewData["Title"] = "Príroda";
+
+    List<PhotoModel> photos = PhotoResolver.GetGallery("nature");
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
@@ -9,38 +12,10 @@
         PRÍRODA
     </h1>
     <div class="row">
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/1.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/2.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/3.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/4.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/vertical/1.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/vertical/2.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/5.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/6.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/7.jpg" alt="príroda">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/nature/horizontal/8.jpg" alt="príroda">
-        </div>
-
-        <!--TODO DBS genrovanie-->
+        @foreach (PhotoModel item in photos)
+        {
+            <component type="typeof(Photo)" param-File="@(item.TITLE)" param-Category="@(item.CATEGORY)" param-Orientation="@(item.ORIENTATION)" render-mode="ServerPrerendered" />
+        }
     </div>
 </div>
 

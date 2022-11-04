@@ -1,5 +1,8 @@
-﻿@{
+﻿@using SemestralnaPraca.Controllers
+@{
     ViewData["Title"] = "Iné";
+
+    List<PhotoModel> photos = PhotoResolver.GetGallery("other");
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
@@ -9,36 +12,10 @@
         INÉ
     </h1>
     <div class="row">
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/horizontal/1.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/horizontal/2.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/vertical/1.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/vertical/2.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/horizontal/3.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/horizontal/4.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/vertical/3.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/vertical/4.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/horizontal/5.jpg" alt="iné">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/other/horizontal/6.jpg" alt="iné">
-        </div>
+        @foreach (PhotoModel item in photos)
+        {
+            <component type="typeof(Photo)" param-File="@(item.TITLE)" param-Category="@(item.CATEGORY)" param-Orientation="@(item.ORIENTATION)" render-mode="ServerPrerendered" />
+        }
     </div>
 </div>
 

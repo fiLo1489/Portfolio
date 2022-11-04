@@ -1,5 +1,8 @@
-﻿@{
+﻿@using SemestralnaPraca.Controllers
+@{
     ViewData["Title"] = "Vozidlá";
+
+    List<PhotoModel> photos = PhotoResolver.GetGallery("car");
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
@@ -9,38 +12,10 @@
         VOZIDLÁ
     </h1>
     <div class="row">
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/horizontal/1.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/horizontal/2.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/horizontal/3.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/horizontal/4.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/horizontal/5.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/horizontal/6.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/vertical/1.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/vertical/2.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/vertical/3.jpg" alt="vozidlá">
-        </div>
-        <div class="col-lg-6 padding-medium">
-            <img class="light-border bright-border" src="../../image/gallery/car/horizontal/7.jpg" alt="vozidlá">
-        </div>
-
-        <!--TODO DBS generovanie-->
+        @foreach (PhotoModel item in photos)
+        {
+            <component type="typeof(Photo)" param-File="@(item.TITLE)" param-Category="@(item.CATEGORY)" param-Orientation="@(item.ORIENTATION)" render-mode="ServerPrerendered" />
+        }
     </div>
 </div>
 
