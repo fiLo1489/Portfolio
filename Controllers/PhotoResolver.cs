@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -12,7 +12,7 @@ namespace SemestralnaPraca.Controllers
             List<PhotoModel> verticalPhotos = new List<PhotoModel>();
 
             string query = "select * from PHOTOS where CATEGORY='" + category + "'";
-            string connectionString = "Data Source=localhost;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password";
+            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
