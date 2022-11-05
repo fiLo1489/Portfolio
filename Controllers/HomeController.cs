@@ -21,7 +21,17 @@ namespace SemestralnaPraca.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
         public IActionResult Form()
+        {
+            return View();
+        }
+
+        public IActionResult Register()
         {
             return View();
         }
@@ -131,34 +141,29 @@ namespace SemestralnaPraca.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult About()
-        {
-            return View();
-        }
-
         public IActionResult Wedding()
         {
-            return View();
+            return View("~/Views/Gallery/Wedding.cshtml");
         }
 
         public IActionResult Event()
         {
-            return View();
+            return View("~/Views/Gallery/Event.cshtml");
         }
 
         public IActionResult Car()
         {
-            return View();
+            return View("~/Views/Gallery/Car.cshtml");
         }
 
         public IActionResult Nature()
         {
-            return View();
+            return View("~/Views/Gallery/Nature.cshtml");
         }
 
         public IActionResult Other()
         {
-            return View();
+            return View("~/Views/Gallery/Other.cshtml");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
