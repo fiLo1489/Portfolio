@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
 
@@ -13,6 +14,8 @@ namespace SemestralnaPraca.Controllers
             context = httpContextAccessor;
         }
 
+        
+
         public IActionResult Index()
         {
             return View();
@@ -21,6 +24,30 @@ namespace SemestralnaPraca.Controllers
         public IActionResult Form()
         {
             return View();
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(string login)
+        {
+            UserModel user = new UserModel();
+
+            user.LOGIN = login;
+
+            context.HttpContext.Session.SetString(SessionVariables.UserName, login);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Logout()
+        {
+            context.HttpContext.Session.SetString(SessionVariables.UserName, string.Empty);
+
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult About()
