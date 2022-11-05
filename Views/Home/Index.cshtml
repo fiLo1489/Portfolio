@@ -1,5 +1,10 @@
-﻿@{
+﻿@using SemestralnaPraca.Controllers
+@inject IHttpContextAccessor context;
+
+@{
     ViewData["Title"] = "Filip Zaťko";
+
+    context.HttpContext.Session.SetString(SessionVariables.UserName, "meno");
 }
 
 <div class="title-style background-format" style="background-image: url('image/background/1.jpg');">

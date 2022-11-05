@@ -1,6 +1,10 @@
 ﻿@using SemestralnaPraca.Controllers
+@inject IHttpContextAccessor context;
+
 @{
     ViewData["Title"] = "Iné";
+
+    string user = context.HttpContext.Session.GetString(SessionVariables.UserName);
 
     List<PhotoModel> photos = PhotoResolver.GetGallery("other");
 }
@@ -18,5 +22,7 @@
         }
     </div>
 </div>
+
+<a>@user</a>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />

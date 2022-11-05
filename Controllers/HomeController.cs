@@ -6,11 +6,11 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IHttpContextAccessor context;
+        
+        public HomeController(IHttpContextAccessor httpContextAccessor)
         {
-            _logger = logger;
+            context = httpContextAccessor;
         }
 
         public IActionResult Index()
