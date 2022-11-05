@@ -12,7 +12,7 @@ namespace SemestralnaPraca.Controllers
             List<PhotoModel> verticalPhotos = new List<PhotoModel>();
 
             string query = "select * from PHOTOS where CATEGORY='" + category + "'";
-            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];;
+            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

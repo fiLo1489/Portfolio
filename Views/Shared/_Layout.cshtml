@@ -49,10 +49,31 @@
             </div>
             <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                 <ul class="navbar-nav ms-auto">
-                    @if (string.IsNullOrEmpty(@context.HttpContext.Session.GetString(SessionVariables.UserName)))
+                    <li class="nav-item">
+                        <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="About">O MNE</a>
+                    </li>
+                    @if (@context.HttpContext.Session.GetString(SessionVariables.Role) == "admin")
+                    { 
+                        <li class="nav-item">
+                            <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Photos">FOTOGRAFIE</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Requests">ŽIADOSTI</a>
+                        </li>
+                    }
+                    else if (@context.HttpContext.Session.GetString(SessionVariables.Role) == "user")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Form">FORMULÁR</a>
+                        </li>
+                    }
+                    @if (string.IsNullOrEmpty(@context.HttpContext.Session.GetString(SessionVariables.Mail)))
                     { 
                         <li class="nav-item">
                             <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Login">PRIHLÁSENIE</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Register">Registrácia</a>
                         </li>
                     }
                     else
@@ -63,13 +84,7 @@
                         <li class="nav-item">
                             <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Logout">ODHLÁSENIE</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Form">FORMULÁR</a>
-                        </li>
                     }
-                    <li class="nav-item">
-                        <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="About">O MNE</a>
-                    </li>
                 </ul>
             </div>
         </nav>
