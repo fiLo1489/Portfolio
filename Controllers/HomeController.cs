@@ -16,8 +16,6 @@ namespace SemestralnaPraca.Controllers
             context = httpContextAccessor;
         }
 
-        
-
         public IActionResult Index()
         {
             return View();
@@ -37,26 +35,39 @@ namespace SemestralnaPraca.Controllers
         public IActionResult Login(string mail, string password)
         {
             string errorMessage = string.Empty;
+            ViewBag.Mail = mail;
 
             if (string.IsNullOrWhiteSpace(mail))
             {
                 errorMessage += "nebol zadaný mail, ";
             }
-            else if (!mail.Contains('@') || !mail.Contains('.'))
+            else
             {
-                errorMessage += "zadaný mail má nesprávny tvar, ";
+                if (!mail.Trim().Contains('@') || !mail.Trim().Contains('.'))
+                {
+                    errorMessage += "zadaný mail má nesprávny tvar, ";
+                }
+
+                if (mail.Contains("select ") || mail.Contains("delete ") || mail.Contains("alter ") || mail.Contains("update "))
+                {
+                    errorMessage += "zadaný mail obashuje nepovolené kľúčové slová, ";
+                }
             }
-            else if (string.IsNullOrWhiteSpace(password))
+
+            if (string.IsNullOrWhiteSpace(password))
             {
                 errorMessage += "nebolo zadané heslo, ";
             }
-
-            // TODO injectiom osetrenie
+            else
+            {
+                if (password.Contains("select ") || password.Contains("delete ") || password.Contains("alter ") || password.Contains("update "))
+                {
+                    errorMessage += "zadané heslo obashuje nepovolené kľúčové slová, ";
+                }
+            }
 
             if (string.IsNullOrWhiteSpace(errorMessage))
             {
-                
-
                 string query = "select * from CREDENTIALS where MAIL='" + mail + "'";
                 string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
 
@@ -85,14 +96,16 @@ namespace SemestralnaPraca.Controllers
                                 {
                                     errorMessage += "nesprávne zadané heslo";
 
-                                    return View(); // TODO s chybovou hlaskou
+                                    ViewBag.ErrorMessage = errorMessage;
+                                    return View();
                                 }
                             }
                             else
                             {
                                 errorMessage += "daný účet neexistuje";
 
-                                return View(); // TODO s chybovou hlaskou
+                                ViewBag.ErrorMessage = errorMessage;
+                                return View();
                             }
                         }
                     }
@@ -100,9 +113,10 @@ namespace SemestralnaPraca.Controllers
             }
             else
             {
-                errorMessage = errorMessage.Remove(errorMessage.Length - 1);
+                errorMessage = errorMessage.Remove(errorMessage.Length - 2);
 
-                return View(); // TODO s chybovou hlaskou
+                ViewBag.ErrorMessage = errorMessage;
+                return View();
             }
         }
 

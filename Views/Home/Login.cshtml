@@ -12,7 +12,7 @@
         <div class="form-group row padding-light">
             <label for="name" class="col-lg-2 col-form-label">Mail</label>
             <div class="col-lg-10">
-                <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Mail">
+                <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Mail" value="@ViewBag.Mail">
             </div>
         </div>
         <div class="form-group row padding-light">
@@ -21,8 +21,10 @@
                 <input type="password" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Password">
             </div>
         </div>
-        <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">PRIHLÁSIŤ</button>
+        <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">PRIHLÁSIŤ</button>
     </form>
+    <a class="error-color">@ViewBag.ErrorMessage</a>
+    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Registration">nemám účet a chcem si ho vytvoriť</a>
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />

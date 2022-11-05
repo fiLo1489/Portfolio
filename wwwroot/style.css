@@ -93,6 +93,11 @@ html, body
     text-decoration: none;
 }
 
+.error-color {
+    color: #DD0000 !important;
+    text-decoration: none;
+}
+
 .size-text
 {
     font-size: 15vmin;
