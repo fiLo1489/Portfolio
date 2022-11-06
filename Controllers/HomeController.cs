@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using NuGet.Protocol.Plugins;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
+using System.Drawing;
+using System.Net.Mail;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -36,6 +39,43 @@ namespace SemestralnaPraca.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Register(string mail, string name, string surname, string password, string confirmation, string phone)
+        {
+            string errorMessage = string.Empty;
+            ViewBag.Mail = mail;
+            ViewBag.Name = name;
+            ViewBag.Surname = surname;
+            ViewBag.Phone = phone;
+
+            errorMessage += DataHandler.CheckMail(mail);
+            errorMessage += DataHandler.CheckPhone(phone);
+
+            if (!password.Equals(confirmation))
+            {
+                errorMessage += "heslá sa nezhodujú, ";
+            }
+            
+            errorMessage += DataHandler.CheckPassword(password);
+
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                // TODO sifrovanie
+                // TODO insert do databazy
+
+                LoginAction(mail, "user", name, surname, phone);
+            }
+            else
+            {
+                errorMessage = errorMessage.Remove(errorMessage.Length - 2);
+
+                ViewBag.Reply = errorMessage;
+                return View();
+            }
+
+            return View();
+        }
+
         public IActionResult Login()
         {
             return View();
@@ -47,34 +87,8 @@ namespace SemestralnaPraca.Controllers
             string errorMessage = string.Empty;
             ViewBag.Mail = mail;
 
-            if (string.IsNullOrWhiteSpace(mail))
-            {
-                errorMessage += "nebol zadaný mail, ";
-            }
-            else
-            {
-                if (!mail.Trim().Contains('@') || !mail.Trim().Contains('.'))
-                {
-                    errorMessage += "zadaný mail má nesprávny tvar, ";
-                }
-
-                if (mail.Contains("select ") || mail.Contains("delete ") || mail.Contains("alter ") || mail.Contains("update "))
-                {
-                    errorMessage += "zadaný mail obashuje nepovolené kľúčové slová, ";
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                errorMessage += "nebolo zadané heslo, ";
-            }
-            else
-            {
-                if (password.Contains("select ") || password.Contains("delete ") || password.Contains("alter ") || password.Contains("update "))
-                {
-                    errorMessage += "zadané heslo obashuje nepovolené kľúčové slová, ";
-                }
-            }
+            errorMessage += DataHandler.CheckMail(mail);
+            errorMessage += DataHandler.CheckPassword(password);
 
             if (string.IsNullOrWhiteSpace(errorMessage))
             {
@@ -94,11 +108,7 @@ namespace SemestralnaPraca.Controllers
 
                                 if ((string)reader[1] == password)
                                 {
-                                    context.HttpContext.Session.SetString(SessionVariables.Mail, (string)reader[0]);
-                                    context.HttpContext.Session.SetString(SessionVariables.Role, (string)reader[2]);
-                                    context.HttpContext.Session.SetString(SessionVariables.Name, (string)reader[3]);
-                                    context.HttpContext.Session.SetString(SessionVariables.Surname, (string)reader[4]);
-                                    context.HttpContext.Session.SetString(SessionVariables.Phone, (string)reader[5]);
+                                    LoginAction((string)reader[0], (string)reader[2], (string)reader[3], (string)reader[4], (string)reader[5]);
 
                                     return RedirectToAction("Index", "Home");
                                 }
@@ -106,7 +116,7 @@ namespace SemestralnaPraca.Controllers
                                 {
                                     errorMessage += "nesprávne zadané heslo";
 
-                                    ViewBag.ErrorMessage = errorMessage;
+                                    ViewBag.Reply = errorMessage;
                                     return View();
                                 }
                             }
@@ -114,7 +124,7 @@ namespace SemestralnaPraca.Controllers
                             {
                                 errorMessage += "daný účet neexistuje";
 
-                                ViewBag.ErrorMessage = errorMessage;
+                                ViewBag.Reply = errorMessage;
                                 return View();
                             }
                         }
@@ -125,18 +135,14 @@ namespace SemestralnaPraca.Controllers
             {
                 errorMessage = errorMessage.Remove(errorMessage.Length - 2);
 
-                ViewBag.ErrorMessage = errorMessage;
+                ViewBag.Reply = errorMessage;
                 return View();
             }
         }
 
         public IActionResult Logout()
         {
-            context.HttpContext.Session.SetString(SessionVariables.Mail, string.Empty);
-            context.HttpContext.Session.SetString(SessionVariables.Name, string.Empty);
-            context.HttpContext.Session.SetString(SessionVariables.Surname, string.Empty);
-            context.HttpContext.Session.SetString(SessionVariables.Phone, string.Empty);
-            context.HttpContext.Session.SetString(SessionVariables.Role, string.Empty);
+            LogoutAction();
 
             return RedirectToAction("Index", "Home");
         }
@@ -164,6 +170,24 @@ namespace SemestralnaPraca.Controllers
         public IActionResult Other()
         {
             return View("~/Views/Gallery/Other.cshtml");
+        }
+
+        private void LoginAction(string mail, string role, string name, string surname, string phone)
+        {
+            context.HttpContext.Session.SetString(SessionVariables.Mail, mail);
+            context.HttpContext.Session.SetString(SessionVariables.Role, role);
+            context.HttpContext.Session.SetString(SessionVariables.Name, name);
+            context.HttpContext.Session.SetString(SessionVariables.Surname, surname);
+            context.HttpContext.Session.SetString(SessionVariables.Phone, phone);
+        }
+
+        private void LogoutAction()
+        {
+            context.HttpContext.Session.SetString(SessionVariables.Mail, string.Empty);
+            context.HttpContext.Session.SetString(SessionVariables.Name, string.Empty);
+            context.HttpContext.Session.SetString(SessionVariables.Surname, string.Empty);
+            context.HttpContext.Session.SetString(SessionVariables.Phone, string.Empty);
+            context.HttpContext.Session.SetString(SessionVariables.Role, string.Empty);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
