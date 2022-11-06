@@ -1,14 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using NuGet.Protocol.Plugins;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
-using System.Drawing;
-using System.Net.Mail;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -161,6 +154,11 @@ namespace SemestralnaPraca.Controllers
             LogoutAction();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Account()
+        {
+            return View();
         }
 
         public IActionResult Wedding()
