@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NuGet.DependencyResolver;
+using System.Text;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -77,13 +78,25 @@ namespace SemestralnaPraca.Controllers
                     result += "zadané telefónne číslo má nesprávny tvar, ";
                 }
 
-                if (phone.Length > 10)
+                if (phone.Length > 14)
                 {
                     result += "číslo je príliš dlhé";
                 }
             }
 
             return result;
+        }
+
+        public static string Hash(string input)
+        {
+            var crypt = new System.Security.Cryptography.SHA256Managed();
+            var output = new System.Text.StringBuilder();
+            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(input));
+            foreach (byte theByte in crypto)
+            {
+                output.Append(theByte.ToString("x2"));
+            }
+            return output.Append("pht").ToString();
         }
     }
 }

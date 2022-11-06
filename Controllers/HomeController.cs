@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
@@ -60,10 +61,12 @@ namespace SemestralnaPraca.Controllers
 
             if (string.IsNullOrEmpty(errorMessage))
             {
-                // TODO sifrovanie
                 // TODO insert do databazy
 
-                LoginAction(mail, "user", name, surname, phone);
+                string hashPassword = DataHandler.Hash(password);
+                string userRole = "user";
+
+                LoginAction(mail, userRole, name, surname, phone);
             }
             else
             {
@@ -106,7 +109,7 @@ namespace SemestralnaPraca.Controllers
                             {
                                 reader.Read();
 
-                                if ((string)reader[1] == password)
+                                if ((string)reader[1] == DataHandler.Hash(password))
                                 {
                                     LoginAction((string)reader[0], (string)reader[2], (string)reader[3], (string)reader[4], (string)reader[5]);
 
