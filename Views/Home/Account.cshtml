@@ -1,15 +1,25 @@
-﻿<div class="dark-background">
+﻿@using SemestralnaPraca.Controllers
+@inject IHttpContextAccessor context;
+@{
+    ViewData["Title"] = "Účet";
+}
+
+<component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
+
+<div class="dark-background">
     <div class="container-fluid padding-heavy bright-color text-center">
+        <h1 class="heavy-text mb-3">
+            ÚČET
+        </h1>
         <div class="row">
-            <div class="col-xl padding-medium">
-                <img class="light-border bright-border" src="image/showcase/wedding.jpg" alt="svadby">
+            <div class="col-xl padding-medium d-flex flex-column justify-content-center">
+                <p class="light-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus ex quis dolor ullamcorper, quis
+                    hendrerit est rutrum. Morbi quis ex luctus, mollis ipsum id, lobortis metus. Vestibulum nec arcu mi.
+                    In at sem nibh. In pulvinar mollis lacus, ac hendrerit diam convallis sit amet.
+                </p>
             </div>
-            <div class="col-xl d-flex flex-column justify-content-center padding-medium">
-                <h2>
-                    <a class="heavy-text bright-color mb-3" href="page/gallery/wedding.html">
-                        ÚČET
-                    </a>
-                </h2>
+            <div class="col-xl padding-medium d-flex flex-column justify-content-center">
                 <p class="light-text">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus ex quis dolor ullamcorper, quis
                     hendrerit est rutrum. Morbi quis ex luctus, mollis ipsum id, lobortis metus. Vestibulum nec arcu mi.
@@ -19,3 +29,5 @@
         </div>
     </div>
 </div>
+
+<component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
