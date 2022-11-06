@@ -8,13 +8,15 @@ using SemestralnaPraca.Models;
 using System.Diagnostics;
 using System.Drawing;
 using System.Net.Mail;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IHttpContextAccessor context;
-        
+        string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+
         public HomeController(IHttpContextAccessor httpContextAccessor)
         {
             context = httpContextAccessor;
@@ -61,12 +63,24 @@ namespace SemestralnaPraca.Controllers
 
             if (string.IsNullOrEmpty(errorMessage))
             {
-                // TODO insert do databazy
-
                 string hashPassword = DataHandler.Hash(password);
                 string userRole = "user";
 
+                string query = "insert into CREDENTIALS values " +
+                    "('" + mail + "', '" + hashPassword + "', '" + userRole + "', '" + name + "', '" + surname + "', '" + phone + "')";
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
                 LoginAction(mail, userRole, name, surname, phone);
+
+                return RedirectToAction("Index", "Home");
             }
             else
             {
@@ -96,7 +110,6 @@ namespace SemestralnaPraca.Controllers
             if (string.IsNullOrWhiteSpace(errorMessage))
             {
                 string query = "select * from CREDENTIALS where MAIL='" + mail + "'";
-                string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
