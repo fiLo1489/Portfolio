@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Formatters.Xml;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using NuGet.DependencyResolver;
-using System.Text;
+﻿using System.Text;
 
 namespace SemestralnaPraca.Controllers
 {

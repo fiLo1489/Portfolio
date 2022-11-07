@@ -39,7 +39,7 @@ namespace SemestralnaPraca.Controllers
             }
             else
             {
-                return RedirectToAction("Account", "Home");
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -102,7 +102,7 @@ namespace SemestralnaPraca.Controllers
             }
             else
             {
-                return RedirectToAction("Account", "Home");
+                return RedirectToAction("Index", "Home");
             }
         }
 
