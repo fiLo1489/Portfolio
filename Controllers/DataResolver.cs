@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
-using Microsoft.Extensions.Configuration;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Text;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -26,9 +25,9 @@ namespace SemestralnaPraca.Controllers
                         {
                             PhotoModel photo = new PhotoModel();
 
-                            photo.TITLE = (string)reader[1];
-                            photo.CATEGORY = (string)reader[2];
-                            photo.ORIENTATION = (string)reader[3];
+                            photo.TITLE = reader[1].ToString();
+                            photo.CATEGORY = reader[2].ToString();
+                            photo.ORIENTATION = DatabaseTranslator.Orientation[reader[3].ToString()];
 
                             if (photo.ORIENTATION.Equals("horizontal"))
                             {
@@ -91,27 +90,19 @@ namespace SemestralnaPraca.Controllers
 
         public static List<string> GetCategories()
         {
-            List<string> categories = new List<string>();
+            return DatabaseTranslator.Categories.Values.ToList();
+        }
 
-            string query = "select * from CATEGORIES";
-            string connectionString = "Data Source=localhost;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+        public static string Hash(string input)
+        {
+            var crypt = new System.Security.Cryptography.SHA256Managed();
+            var output = new System.Text.StringBuilder();
+            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(input));
+            foreach (byte theByte in crypto)
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(query, connection))
-                {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            categories.Add((string) reader[1]);
-                        }
-                    }
-                }
+                output.Append(theByte.ToString("x2"));
             }
-
-            return categories;
+            return output.Append("pht").ToString();
         }
     }
 }

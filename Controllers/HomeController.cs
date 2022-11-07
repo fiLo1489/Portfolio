@@ -51,35 +51,25 @@ namespace SemestralnaPraca.Controllers
             ViewBag.Name = name;
             ViewBag.Surname = surname;
             ViewBag.Phone = phone;
-
-            errorMessage += DataHandler.CheckMail(mail);
-            errorMessage += DataHandler.CheckPhone(phone);
-
-            if (!password.Equals(confirmation))
-            {
-                errorMessage += "heslá sa nezhodujú, ";
-            }
             
-            errorMessage += DataHandler.CheckPassword(password);
+            // TODO kontrola, ci uz uzivatel neexistuje
+            // TODO doplnenie tabuľky
 
             if (string.IsNullOrEmpty(errorMessage))
             {
-                string hashPassword = DataHandler.Hash(password);
-                string userRole = "user";
-
-                string query = "insert into CREDENTIALS values " +
-                    "('" + mail + "', '" + hashPassword + "', '" + userRole + "', '" + name + "', '" + surname + "', '" + phone + "')";
+                string credentialsQuery = "insert into CREDENTIALS values " +
+                    "('" + mail + "', '" + DataResolver.Hash(password) + "', '" + name + "', '" + surname + "', '" + phone + "', '1')";
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    using (SqlCommand cmd = new SqlCommand(credentialsQuery, connection))
                     {
                         cmd.ExecuteNonQuery();
                     }
                 }
 
-                LoginAction(mail, userRole, name, surname, phone);
+                LoginAction(mail, 2, name, surname, phone);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -112,9 +102,6 @@ namespace SemestralnaPraca.Controllers
             string errorMessage = string.Empty;
             ViewBag.Mail = mail;
 
-            errorMessage += DataHandler.CheckMail(mail);
-            errorMessage += DataHandler.CheckPassword(password);
-
             if (string.IsNullOrWhiteSpace(errorMessage))
             {
                 string query = "select * from CREDENTIALS where MAIL='" + mail + "'";
@@ -130,9 +117,9 @@ namespace SemestralnaPraca.Controllers
                             {
                                 reader.Read();
 
-                                if ((string)reader[1] == DataHandler.Hash(password))
+                                if (reader[1].ToString() == DataResolver.Hash(password))
                                 {
-                                    LoginAction((string)reader[0], (string)reader[2], (string)reader[3], (string)reader[4], (string)reader[5]);
+                                    LoginAction(reader[0].ToString(), int.Parse(reader[5].ToString()), reader[2].ToString(), reader[3].ToString(), reader[4].ToString());
 
                                     return RedirectToAction("Index", "Home");
                                 }
@@ -208,10 +195,10 @@ namespace SemestralnaPraca.Controllers
             return View("~/Views/Gallery/Other.cshtml");
         }
 
-        private void LoginAction(string mail, string role, string name, string surname, string phone)
+        private void LoginAction(string mail, int role, string name, string surname, string phone)
         {
             context.HttpContext.Session.SetString(SessionVariables.Mail, mail);
-            context.HttpContext.Session.SetString(SessionVariables.Role, role);
+            context.HttpContext.Session.SetInt32(SessionVariables.Role, role);
             context.HttpContext.Session.SetString(SessionVariables.Name, name);
             context.HttpContext.Session.SetString(SessionVariables.Surname, surname);
             context.HttpContext.Session.SetString(SessionVariables.Phone, phone);
@@ -223,7 +210,7 @@ namespace SemestralnaPraca.Controllers
             context.HttpContext.Session.SetString(SessionVariables.Name, string.Empty);
             context.HttpContext.Session.SetString(SessionVariables.Surname, string.Empty);
             context.HttpContext.Session.SetString(SessionVariables.Phone, string.Empty);
-            context.HttpContext.Session.SetString(SessionVariables.Role, string.Empty);
+            context.HttpContext.Session.SetInt32(SessionVariables.Role, 0);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

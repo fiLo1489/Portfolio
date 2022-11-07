@@ -184,6 +184,34 @@ html, body
     box-shadow: none;
 }
 
-.highlight:hover {
+.highlight:hover 
+{
     background: #505050 !important;
+}
+
+.form-group.success input 
+{
+    border-color: #00AA00 !important
+}
+
+.form-group.error input 
+{
+    border-color: #DD0000 !important
+}
+
+.form-group a 
+{
+    visibility: collapse;
+}
+
+.form-group.success a 
+{
+    color: #00AA00 !important;
+    visibility: visible;
+}
+
+.form-group.error a 
+{
+    color: #DD0000 !important;
+    visibility: visible;
 }

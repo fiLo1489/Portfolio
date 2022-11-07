@@ -40,23 +40,26 @@
                             }
                             else
                             {
-                                @if (@context.HttpContext.Session.GetString(SessionVariables.Role).Equals("admin"))
+                                @if (@context.HttpContext.Session.GetInt32(SessionVariables.Role) >= 1)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Users">POUŽÍVATELIA</a>
+                                        <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Users">SPRÁVA POUŽIVATEĽOV</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Photos">FOTOGRAFIE</a>
+                                        <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Photos">SPRÁVA FOTOGRAFIÍ</a>
                                     </li>
                                 }
-                                else if (@context.HttpContext.Session.GetString(SessionVariables.Role).Equals("user"))
+                                else if (@context.HttpContext.Session.GetInt32(SessionVariables.Role) >= 2)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Form">FORMULÁR</a>
+                                        <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Form">ODOSLANIE ŽIADOSTI</a>
                                     </li>
                                 }
                                 <li class="nav-item">
-                                    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Reuqests">ŽIADOSTI</a>
+                                    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Reuqests">SPRÁVA ŽIADOSTÍ</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Password">ZMENA HESLA</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Logout">ODHLÁSENIE</a>
@@ -77,21 +80,15 @@
             </div>
             <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Wedding">SVADBY</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Event">PODUJATIA</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Car">VOZIDLÁ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Nature">PRÍRODA</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="Other">INÉ</a>
-                    </li>
+                    @foreach(KeyValuePair<string, string> item in DatabaseTranslator.Categories)
+                    {
+                        string action = char.ToUpper(@item.Key[0]) + @item.Key.Substring(1);
+                        string value = @item.Value.ToUpper();
+
+                        <li class="nav-item active">
+                            <a class="nav-link dark-color light-text" asp-area="" asp-controller="Home" asp-action="@action">@value</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </nav>
@@ -122,9 +119,7 @@
             </a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/validator.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
