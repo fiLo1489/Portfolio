@@ -1,10 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
 using Microsoft.Extensions.Configuration;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SemestralnaPraca.Controllers
 {
-    public static class PhotoResolver
+    public static class DataResolver
     {
         public static List<PhotoModel> GetGallery(string category)
         {
@@ -86,6 +87,31 @@ namespace SemestralnaPraca.Controllers
             }
 
             return photos;
+        }
+
+        public static List<string> GetCategories()
+        {
+            List<string> categories = new List<string>();
+
+            string query = "select * from CATEGORIES";
+            string connectionString = "Data Source=localhost;Persist Security Info=True;User ID=sa;Password=yourStrong(!)Password";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            categories.Add((string) reader[1]);
+                        }
+                    }
+                }
+            }
+
+            return categories;
         }
     }
 }
