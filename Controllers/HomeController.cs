@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
@@ -32,7 +33,14 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult Register()
         {
-            return View();
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Account", "Home");
+            }
         }
 
         [HttpPost]
@@ -88,7 +96,14 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult Login()
         {
-            return View();
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Account", "Home");
+            }
         }
 
         [HttpPost]
@@ -158,7 +173,14 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult Account()
         {
-            return View();
+            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         public IActionResult Wedding()
