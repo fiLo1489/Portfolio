@@ -1,14 +1,5 @@
 ﻿form.addEventListener('submit', e =>
 {
-	var submit = checkInputs();
-
-	if (!submit)
-	{
-		e.preventDefault();
-	}
-});
-
-function checkInputs() {
 	const mailValue = document.getElementById('mailInput').value.trim();
 	const passwordValue = document.getElementById('passwordInput').value.trim();
 
@@ -19,8 +10,7 @@ function checkInputs() {
 	{
 		mailMessage += 'nebol zadaný mail, ';
 	}
-	else
-	{
+	else {
 		if (mailValue.includes('insert ') || mailValue.includes('select ') || mailValue.includes('update ') || mailValue.includes('delete '))
 		{
 			mailMessage += 'zadaný mail obashuje nepovolené kľúčové slová, ';
@@ -33,7 +23,7 @@ function checkInputs() {
 
 		if (mailValue.length > 255)
 		{
-			mailMessage += 'zadaný mail je príliš dlhý, ';	
+			mailMessage += 'zadaný mail je príliš dlhý, ';
 		}
 	}
 
@@ -41,9 +31,9 @@ function checkInputs() {
 	{
 		passwordMessage += 'nebol zadaný mail, ';
 	}
-	else {
-		if (passwordValue.includes('insert ') || passwordValue.includes('select ') || passwordValue.includes('update ') || mailValue.includes('delete '))
-		{
+	else
+	{
+		if (passwordValue.includes('insert ') || passwordValue.includes('select ') || passwordValue.includes('update ') || mailValue.includes('delete ')) {
 			passwordMessage += 'zadané heslo obashuje nepovolené kľúčové slová, ';
 		}
 
@@ -56,15 +46,14 @@ function checkInputs() {
 		}
 	}
 
-	unsetStatusFor('mail');
-	unsetStatusFor('password');
+	unsetFor('mail');
+	unsetFor('password');
 
 	if (mailMessage === '')
 	{
 		setSuccessFor('mail');
 	}
-	else
-	{
+	else {
 		setErrorFor('mail', mailMessage.substring(0, mailMessage.length - 2));
 	}
 
@@ -72,20 +61,26 @@ function checkInputs() {
 	{
 		setSuccessFor('password');
 	}
-	else
-	{
+	else {
 		setErrorFor('password', passwordMessage.substring(0, passwordMessage.length - 2));
 	}
 
+	var submit;
+
 	if (passwordMessage === '' && mailMessage === '')
 	{
-		return true;
+		submit = true;
 	}
 	else
 	{
-		return false;
+		submit = false;
 	}
-}
+
+	if (!submit)
+	{
+		e.preventDefault();
+	}
+});
 
 function setErrorFor(element, message)
 {
@@ -103,7 +98,7 @@ function setSuccessFor(element)
 	parent.classList.add('success');
 }
 
-function unsetStatusFor(element)
+function unsetFor(element)
 {
 	const parent = document.getElementById(element);
 	const children = document.getElementById(element + 'Message');

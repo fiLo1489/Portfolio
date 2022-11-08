@@ -19,8 +19,8 @@
         public static Dictionary<int, string> Access = new Dictionary<int, string>()
         {
             { 1, "používateľ" },
-            { 2, "vlastník" },
-            { 2, "administrátor" }
+            { 2, "administrátor" },
+            { 3, "vlastník" }
         };
 
         public static Dictionary<string, string> Categories = new Dictionary<string, string>()

@@ -10,14 +10,14 @@
     </h1>
     <form id="form" method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Login">
         <div id="mail" class="form-group row padding-light">
-            <label for="mail" class="col-xl-2 col-form-label">Mail</label>
+            <label for="mailInput" class="col-xl-2 col-form-label">Mail</label>
             <div class="col-xl-10">
                 <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Mail" value="@ViewBag.Mail" id="mailInput">
             </div>
             <a id="mailMessage"></a>
         </div>
         <div id="password" class="form-group row padding-light">
-            <label for="password" class="col-xl-2 col-form-label">Heslo</label>
+            <label for="passwordInput" class="col-xl-2 col-form-label">Heslo</label>
             <div class="col-xl-10">
                 <input type="password" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Password" id="passwordInput">
             </div>
@@ -25,10 +25,10 @@
         </div>
         <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">PRIHLÁSIŤ</button>
     </form>
-    <p class="error-color">@ViewBag.Reply</p>
+    <p class="error-color light-text">@ViewBag.Reply</p>
     <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Register">nemám účet a chcem si ho vytvoriť</a>
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
 
-<script src="~/js/mailpassword.js"></script>
+<script src="~/js/loginvalidation.js"></script>

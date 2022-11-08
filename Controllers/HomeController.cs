@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
@@ -8,6 +8,10 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
+        // TODO doplnenie tabulky (mohla by byt navstevovanost)
+        // TODO suhlas s cookies
+        // TODO ajax
+        
         private readonly IHttpContextAccessor context;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
 
@@ -31,6 +35,34 @@ namespace SemestralnaPraca.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Form(int category, string description)
+        {
+            string user = context.HttpContext.Session.GetString(SessionVariables.Mail);
+
+            if (!string.IsNullOrEmpty(user))
+            {
+                string formQuery = "insert into REQUESTS values " +
+                    "('" + user + "', '" + DatabaseTranslator.Categories.ElementAt(category).Key + "', '1', '" + description + "')";
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(formQuery, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return RedirectToAction("Index", "Reuqests");
+            }
+            else
+            { 
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
         public IActionResult Register()
         {
             if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
@@ -44,44 +76,53 @@ namespace SemestralnaPraca.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string mail, string name, string surname, string password, string confirmation, string phone)
+        public IActionResult Register(string mail, string name, string surname, string password, string confirmation, string phone, int int32)
         {
-            string errorMessage = string.Empty;
+            string reply = string.Empty;
+            int exists = 0;
+
             ViewBag.Mail = mail;
             ViewBag.Name = name;
             ViewBag.Surname = surname;
             ViewBag.Phone = phone;
-            
-            // TODO kontrola, ci uz uzivatel neexistuje
-            // TODO doplnenie tabuľky
 
-            if (string.IsNullOrEmpty(errorMessage))
-            {
-                string credentialsQuery = "insert into CREDENTIALS values " +
+            string existsQuery = "select count(*) from CREDENTIALS where MAIL='" + mail + "'";
+            string registerQuery = "insert into CREDENTIALS values " +
                     "('" + mail + "', '" + DataResolver.Hash(password) + "', '" + name + "', '" + surname + "', '" + phone + "', '1')";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(existsQuery, connection))
                 {
-                    connection.Open();
-                    using (SqlCommand cmd = new SqlCommand(credentialsQuery, connection))
+                    exists = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+
+                if (exists == 0)
+                {
+                    using (SqlCommand cmd = new SqlCommand(registerQuery, connection))
                     {
                         cmd.ExecuteNonQuery();
                     }
+                    LoginAction(mail, 2, name, surname, phone);
                 }
+                else
+                {
+                    reply += "používateľ so zadaným mailom už existuje, ";
+                }
+            }
 
-                LoginAction(mail, 2, name, surname, phone);
-
+            if (reply.Length.Equals(string.Empty))
+            {
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                errorMessage = errorMessage.Remove(errorMessage.Length - 2);
-
-                ViewBag.Reply = errorMessage;
+                reply = reply.Remove(reply.Length - 2);
+                ViewBag.Reply = reply;
                 return View();
             }
-
-            return View();
         }
 
         public IActionResult Login()
@@ -99,10 +140,10 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult Login(string mail, string password)
         {
-            string errorMessage = string.Empty;
+            string reply = string.Empty;
             ViewBag.Mail = mail;
 
-            if (string.IsNullOrWhiteSpace(errorMessage))
+            if (string.IsNullOrWhiteSpace(reply))
             {
                 string query = "select * from CREDENTIALS where MAIL='" + mail + "'";
 
@@ -125,17 +166,17 @@ namespace SemestralnaPraca.Controllers
                                 }
                                 else
                                 {
-                                    errorMessage += "nesprávne zadané heslo";
+                                    reply += "nesprávne zadané heslo";
 
-                                    ViewBag.Reply = errorMessage;
+                                    ViewBag.Reply = reply;
                                     return View();
                                 }
                             }
                             else
                             {
-                                errorMessage += "daný účet neexistuje";
+                                reply += "daný účet neexistuje";
 
-                                ViewBag.Reply = errorMessage;
+                                ViewBag.Reply = reply;
                                 return View();
                             }
                         }
@@ -144,9 +185,9 @@ namespace SemestralnaPraca.Controllers
             }
             else
             {
-                errorMessage = errorMessage.Remove(errorMessage.Length - 2);
+                reply = reply.Remove(reply.Length - 2);
 
-                ViewBag.Reply = errorMessage;
+                ViewBag.Reply = reply;
                 return View();
             }
         }

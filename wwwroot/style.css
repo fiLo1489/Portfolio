@@ -98,6 +98,11 @@ html, body
     text-decoration: none;
 }
 
+.success-color {
+    color: #00AA00 !important;
+    text-decoration: none;
+}
+
 .size-text
 {
     font-size: 15vmin;

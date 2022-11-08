@@ -49,7 +49,7 @@
                                         <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Photos">SPRÁVA FOTOGRAFIÍ</a>
                                     </li>
                                 }
-                                else if (@context.HttpContext.Session.GetInt32(SessionVariables.Role) >= 2)
+                                @if (@context.HttpContext.Session.GetInt32(SessionVariables.Role) >= 2)
                                 {
                                     <li class="nav-item">
                                         <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Form">ODOSLANIE ŽIADOSTI</a>

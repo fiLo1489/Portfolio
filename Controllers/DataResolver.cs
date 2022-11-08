@@ -95,14 +95,21 @@ namespace SemestralnaPraca.Controllers
 
         public static string Hash(string input)
         {
-            var crypt = new System.Security.Cryptography.SHA256Managed();
-            var output = new System.Text.StringBuilder();
-            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(input));
-            foreach (byte theByte in crypto)
+            if (!string.IsNullOrEmpty(input))
             {
-                output.Append(theByte.ToString("x2"));
+                var crypt = new System.Security.Cryptography.SHA256Managed();
+                var output = new System.Text.StringBuilder();
+                byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(input));
+                foreach (byte theByte in crypto)
+                {
+                    output.Append(theByte.ToString("x2"));
+                }
+                return output.Append("pht").ToString();
             }
-            return output.Append("pht").ToString();
+            else
+            {
+                return string.Empty;
+            }
         }
     }
 }
