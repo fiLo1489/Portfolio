@@ -88,6 +88,40 @@ namespace SemestralnaPraca.Controllers
             return photos;
         }
 
+        public static List<UserModel> GetUsers(string current)
+        {
+            List<UserModel> users = new List<UserModel>();
+
+            string query = "select * from CREDENTIALS where MAIL!='" + current + "'";
+            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            UserModel user = new UserModel();
+
+                            user.MAIL = reader[0].ToString();
+                            user.PASSWORD = reader[1].ToString();
+                            user.NAME = reader[2].ToString();
+                            user.SURNAME = reader[3].ToString();
+                            user.PHONE = reader[4].ToString();
+                            user.ROLE = int.Parse(reader[5].ToString());
+
+                            users.Add(user);
+                        }
+                    }
+                }
+            }
+
+            return users;
+        }
+
         public static List<string> GetCategories()
         {
             return DatabaseTranslator.Categories.Values.ToList();

@@ -1,16 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO doplnenie tabulky (mohla by byt navstevovanost)
-        // TODO suhlas s cookies
+        // TODO doplnenie tabulky s navstevovanostou
         // TODO ajax
+        // TODO suhlas s cookies
+        // TODO overenie pred odoslanim ziadosti
+        // TODO rozdelenie do viacerych controllerov
         
         private readonly IHttpContextAccessor context;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
@@ -30,13 +32,13 @@ namespace SemestralnaPraca.Controllers
             return View();
         }
 
-        public IActionResult Form()
+        public IActionResult FormSubmit()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Form(int category, string description)
+        public IActionResult FormSubmit(int category, string description)
         {
             string user = context.HttpContext.Session.GetString(SessionVariables.Mail);
 
@@ -76,10 +78,11 @@ namespace SemestralnaPraca.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string mail, string name, string surname, string password, string confirmation, string phone, int int32)
+        public IActionResult Register(string mail, string name, string surname, string password, string confirmation, string phone)
         {
             string reply = string.Empty;
             int exists = 0;
+            int role = 1;
 
             ViewBag.Mail = mail;
             ViewBag.Name = name;
@@ -88,7 +91,7 @@ namespace SemestralnaPraca.Controllers
 
             string existsQuery = "select count(*) from CREDENTIALS where MAIL='" + mail + "'";
             string registerQuery = "insert into CREDENTIALS values " +
-                    "('" + mail + "', '" + DataResolver.Hash(password) + "', '" + name + "', '" + surname + "', '" + phone + "', '1')";
+                    "('" + mail + "', '" + DataResolver.Hash(password) + "', '" + name + "', '" + surname + "', '" + phone + "', '" + role + "')";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -105,7 +108,7 @@ namespace SemestralnaPraca.Controllers
                     {
                         cmd.ExecuteNonQuery();
                     }
-                    LoginAction(mail, 2, name, surname, phone);
+                    LoginAction(mail, DatabaseTranslator.Access[role], name, surname, phone);
                 }
                 else
                 {
@@ -113,7 +116,7 @@ namespace SemestralnaPraca.Controllers
                 }
             }
 
-            if (reply.Length.Equals(string.Empty))
+            if (reply.Equals(string.Empty))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -160,7 +163,7 @@ namespace SemestralnaPraca.Controllers
 
                                 if (reader[1].ToString() == DataResolver.Hash(password))
                                 {
-                                    LoginAction(reader[0].ToString(), int.Parse(reader[5].ToString()), reader[2].ToString(), reader[3].ToString(), reader[4].ToString());
+                                    LoginAction(reader[0].ToString(), DatabaseTranslator.Access[int.Parse(reader[5].ToString())], reader[2].ToString(), reader[3].ToString(), reader[4].ToString());
 
                                     return RedirectToAction("Index", "Home");
                                 }
@@ -192,23 +195,49 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
+        public IActionResult UserManagement()
+        {
+            if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
+            {
+                ViewBag.Reply = TempData["Reply"];
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult DeleteUser(string mail)
+        {
+            if (!string.IsNullOrEmpty(mail))
+            {
+                string query = "delete from CREDENTIALS where MAIL='" + mail + "'";
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                TempData["Reply"] = ("používateľ " + mail + " bol úspešne odstránený");
+            }
+            else
+            {
+                TempData["Reply"] = ("nepodarilo sa odstrániť používateľa " + mail);
+            }
+
+            return RedirectToAction("UserManagement", "Home");
+        }
+
         public IActionResult Logout()
         {
             LogoutAction();
 
             return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult Account()
-        {
-            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Login", "Home");
-            }
         }
 
         public IActionResult Wedding()
@@ -236,10 +265,10 @@ namespace SemestralnaPraca.Controllers
             return View("~/Views/Gallery/Other.cshtml");
         }
 
-        private void LoginAction(string mail, int role, string name, string surname, string phone)
+        private void LoginAction(string mail, string role, string name, string surname, string phone)
         {
             context.HttpContext.Session.SetString(SessionVariables.Mail, mail);
-            context.HttpContext.Session.SetInt32(SessionVariables.Role, role);
+            context.HttpContext.Session.SetString(SessionVariables.Role, role);
             context.HttpContext.Session.SetString(SessionVariables.Name, name);
             context.HttpContext.Session.SetString(SessionVariables.Surname, surname);
             context.HttpContext.Session.SetString(SessionVariables.Phone, phone);
@@ -251,7 +280,7 @@ namespace SemestralnaPraca.Controllers
             context.HttpContext.Session.SetString(SessionVariables.Name, string.Empty);
             context.HttpContext.Session.SetString(SessionVariables.Surname, string.Empty);
             context.HttpContext.Session.SetString(SessionVariables.Phone, string.Empty);
-            context.HttpContext.Session.SetInt32(SessionVariables.Role, 0);
+            context.HttpContext.Session.SetString(SessionVariables.Role, string.Empty);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

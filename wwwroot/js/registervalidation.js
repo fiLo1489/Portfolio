@@ -9,7 +9,7 @@
 
 	var mailMessage = '';
 	var nameMessage = '';
-	var surnameMassage = '';
+	var surnameMessage = '';
 	var phoneMessage = '';
 	var passwordMessage = '';
 	var passwordConfirmationMessage = '';

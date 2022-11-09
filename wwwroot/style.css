@@ -3,13 +3,17 @@
     src: url("font/font.woff");
 }
 
-:root
+:root 
 {
     --bright: #f0f0f0;
     --dark: #282828;
+    --error: #DD0000;
+    --warning: #EEBB00;
+    --success: #00AA00;
     --heavy: 50px 5vw;
     --medium: 30px;
     --light: 12px;
+    .error-color
 }
 
 img
@@ -94,12 +98,17 @@ html, body
 }
 
 .error-color {
-    color: #DD0000 !important;
+    color: var(--error) !important;
+    text-decoration: none;
+}
+
+.warning-color {
+    color: var(--warning) !important;
     text-decoration: none;
 }
 
 .success-color {
-    color: #00AA00 !important;
+    color: var(--success) !important;
     text-decoration: none;
 }
 
@@ -196,12 +205,12 @@ html, body
 
 .form-group.success input 
 {
-    border-color: #00AA00 !important
+    border-color: var(--success) !important
 }
 
 .form-group.error input 
 {
-    border-color: #DD0000 !important
+    border-color: var(--error) !important
 }
 
 .form-group a 
@@ -211,12 +220,12 @@ html, body
 
 .form-group.success a 
 {
-    color: #00AA00 !important;
+    color: var(--success) !important;
     visibility: visible;
 }
 
 .form-group.error a 
 {
-    color: #DD0000 !important;
+    color: var(--error) !important;
     visibility: visible;
 }

@@ -1,0 +1,28 @@
+﻿@using SemestralnaPraca.Controllers
+@inject IHttpContextAccessor context;
+
+@{
+    ViewData["Title"] = "Správa používateľov";
+
+    List<UserModel> users = DataResolver.GetUsers(context.HttpContext.Session.GetString(SessionVariables.Mail));
+
+    if (users.Count == 0)
+    {
+        ViewBag.Reply = ""; // TODO hlaska
+    }
+}
+
+<component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
+
+<div class="dark-background padding-heavy text-center light-text bright-color">
+    <h1 class="heavy-text mb-3">
+        POUŽÍVATELIA
+    </h1>
+    <p class="warning-color light-text">@ViewBag.Reply</p>
+    @foreach (UserModel item in users)
+    {
+        <component type="typeof(User)" param-Mail="@(item.MAIL)" render-mode="ServerPrerendered" />
+    }
+</div>
+
+<component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
