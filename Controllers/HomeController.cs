@@ -8,12 +8,10 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO doplnenie tabulky s navstevovanostou
+        // TODO doplnenie tabulky a zalozky s navstevovanostou
         // TODO ajax
-        // TODO suhlas s cookies
         // TODO overenie pred odoslanim ziadosti
-        // TODO rozdelenie do viacerych controllerov
-        // TODO v uzivateloch zobrazovat mensiu uroven
+        // TODO vytiahnutie logiky a komunikácie s databazou z controllera
         
         private readonly IHttpContextAccessor context;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];

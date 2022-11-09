@@ -90,11 +90,11 @@ namespace SemestralnaPraca.Controllers
             return photos;
         }
 
-        public static List<UserModel> GetUsers(string current)
+        public static List<UserModel> GetUsers(string current, int role)
         {
             List<UserModel> users = new List<UserModel>();
 
-            string query = "select * from CREDENTIALS where MAIL!='" + current + "'";
+            string query = "select * from CREDENTIALS where MAIL != '" + current + "' and ROLE <= '" + role + "'";
             string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
 
             using (SqlConnection connection = new SqlConnection(connectionString))
