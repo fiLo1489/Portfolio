@@ -13,6 +13,7 @@ namespace SemestralnaPraca.Controllers
         // TODO suhlas s cookies
         // TODO overenie pred odoslanim ziadosti
         // TODO rozdelenie do viacerych controllerov
+        // TODO v uzivateloch zobrazovat mensiu uroven
         
         private readonly IHttpContextAccessor context;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
@@ -148,42 +149,30 @@ namespace SemestralnaPraca.Controllers
 
             if (string.IsNullOrWhiteSpace(reply))
             {
-                string query = "select * from CREDENTIALS where MAIL='" + mail + "'";
+                UserModel account = DataResolver.GetAccount(mail);
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                if (account != null)
+                { 
+                    if (DataResolver.Hash(password) == account.PASSWORD)
                     {
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                reader.Read();
+                        LoginAction(account.MAIL, DatabaseTranslator.Access[account.ROLE], account.NAME, account.SURNAME, account.PHONE);
 
-                                if (reader[1].ToString() == DataResolver.Hash(password))
-                                {
-                                    LoginAction(reader[0].ToString(), DatabaseTranslator.Access[int.Parse(reader[5].ToString())], reader[2].ToString(), reader[3].ToString(), reader[4].ToString());
-
-                                    return RedirectToAction("Index", "Home");
-                                }
-                                else
-                                {
-                                    reply += "nesprávne zadané heslo";
-
-                                    ViewBag.Reply = reply;
-                                    return View();
-                                }
-                            }
-                            else
-                            {
-                                reply += "daný účet neexistuje";
-
-                                ViewBag.Reply = reply;
-                                return View();
-                            }
-                        }
+                        return RedirectToAction("Index", "Home");
                     }
+                    else
+                    {
+                        reply += "nesprávne zadané heslo";
+
+                        ViewBag.Reply = reply;
+                        return View();
+                    }
+                }
+                else
+                {
+                    reply += "daný účet neexistuje";
+
+                    ViewBag.Reply = reply;
+                    return View();
                 }
             }
             else
@@ -208,29 +197,62 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public IActionResult DeleteUser(string mail)
+        public IActionResult AccountDetails() 
         {
-            if (!string.IsNullOrEmpty(mail))
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
             {
-                string query = "delete from CREDENTIALS where MAIL='" + mail + "'";
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
-                TempData["Reply"] = ("používateľ " + mail + " bol úspešne odstránený");
+                return RedirectToAction("Index", "Home");
             }
             else
             {
-                TempData["Reply"] = ("nepodarilo sa odstrániť používateľa " + mail);
+                ViewBag.User = TempData["User"];
+                return View();
             }
+        }
 
-            return RedirectToAction("UserManagement", "Home");
+        public IActionResult EditUser(string mail)
+        {
+            if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
+            {
+                TempData["User"] = mail;
+                return RedirectToAction("AccountDetails", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult DeleteUser(string mail)
+        {
+            if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
+            {
+                if (!string.IsNullOrEmpty(mail))
+                {
+                    string query = "delete from CREDENTIALS where MAIL='" + mail + "'";
+
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        using (SqlCommand cmd = new SqlCommand(query, connection))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    TempData["Reply"] = ("používateľ " + mail + " bol úspešne odstránený");
+                }
+                else
+                {
+                    TempData["Reply"] = ("nepodarilo sa odstrániť používateľa " + mail);
+                }
+
+                return RedirectToAction("UserManagement", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public IActionResult Logout()

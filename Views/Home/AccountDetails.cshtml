@@ -1,0 +1,74 @@
+﻿@using SemestralnaPraca.Controllers;
+@inject IHttpContextAccessor context;
+
+@{
+    ViewData["Title"] = "Údaje";
+
+    UserModel user;
+    if (string.IsNullOrEmpty(ViewBag.User))
+    {
+        user = DataResolver.GetAccount(context.HttpContext.Session.GetString(SessionVariables.Mail));
+    }
+    else
+    {
+        user = DataResolver.GetAccount(ViewBag.User);
+    }
+}
+
+<component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
+
+<div class="dark-background padding-heavy text-center light-text bright-color">
+    <h1 class="heavy-text mb-3">
+        ÚDAJE
+    </h1>
+    <form id="form" method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Register">
+        <div id="mail" class="form-group row padding-light">
+            <label for="mailInput" class="col-xl-2 col-form-label">Mail</label>
+            <div class="col-xl-10">
+                <input type="text" class="form-control light-border bright-border highlight-background bright-color rounded-0" name="Mail" readonly="readonly" value="@user.MAIL" id="mailInput">
+            </div>
+            <a id="mailMessage"></a>
+        </div>
+        <div id="name" class="form-group row padding-light">
+            <label for="nameInput" class="col-xl-2 col-form-label">Meno</label>
+            <div class="col-xl-10">
+                <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Name" value="@ViewBag.Name" id="nameInput">
+            </div>
+            <a id="nameMessage"></a>
+        </div>
+        <div id="surname" class="form-group row padding-light">
+            <label for="surnameInput" class="col-xl-2 col-form-label">Priezvisko</label>
+            <div class="col-xl-10">
+                <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Surname" value="@ViewBag.Surname" id="surnameInput">
+            </div>
+            <a id="surnameMessage"></a>
+        </div>
+        <div id="phone" class="form-group row padding-light">
+            <label for="phoneInput" class="col-xl-2 col-form-label">Telefónne číslo</label>
+            <div class="col-xl-10">
+                <input type="text" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Phone" value="@ViewBag.Phone" id="phoneInput">
+            </div>
+            <a id="phoneMessage"></a>
+        </div>
+        <div id="password" class="form-group row padding-light">
+            <label for="passwordInput" class="col-xl-2 col-form-label">Heslo</label>
+            <div class="col-xl-10">
+                <input type="password" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Password" id="passwordInput">
+            </div>
+            <a id="passwordMessage"></a>
+        </div>
+        <div id="passwordConfirmation" class="form-group row padding-light">
+            <label for="passwordConfirmationInput" class="col-xl-2 col-form-label">Potvrdenie hesla</label>
+            <div class="col-xl-10">
+                <input type="password" class="form-control light-border bright-border dark-background bright-color rounded-0" name="Confirmation" id="passwordConfirmationInput">
+            </div>
+            <a id="passwordConfirmationMessage"></a>
+        </div>
+        <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">ULOŽIŤ</button>
+    </form>
+    <a class="warning-color light-text">@ViewBag.Reply</a>
+</div>
+
+<component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
+
+<script src="~/js/registervalidation.js"></script>

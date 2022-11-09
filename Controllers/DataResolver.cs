@@ -1,5 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
+using SemestralnaPraca.Views.Components;
 using System.Text;
 
 namespace SemestralnaPraca.Controllers
@@ -120,6 +122,44 @@ namespace SemestralnaPraca.Controllers
             }
 
             return users;
+        }
+
+        public static UserModel GetAccount(string mail)
+        {
+            UserModel account = new UserModel();
+
+            string query = "select * from CREDENTIALS where MAIL='" + mail + "'";
+            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            
+                            UserModel user = new UserModel();
+
+                            user.MAIL = reader[0].ToString();
+                            user.PASSWORD = reader[1].ToString();
+                            user.NAME = reader[2].ToString();
+                            user.SURNAME = reader[3].ToString();
+                            user.PHONE = reader[4].ToString();
+                            user.ROLE = int.Parse(reader[5].ToString());
+
+                            return user;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
         }
 
         public static List<string> GetCategories()

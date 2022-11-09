@@ -10,6 +10,7 @@
     --error: #DD0000;
     --warning: #EEBB00;
     --success: #00AA00;
+    --highlight: #505050;
     --heavy: 50px 5vw;
     --medium: 30px;
     --light: 12px;
@@ -83,6 +84,10 @@ html, body
 .bright-background
 {
     background: var(--bright) !important;
+}
+
+.highlight-background {
+    background: var(--highlight) !important;
 }
 
 .dark-color
@@ -198,9 +203,14 @@ html, body
     box-shadow: none;
 }
 
+.highlight-background
+{
+    background: var(--highlight) !important;
+}
+
 .highlight:hover 
 {
-    background: #505050 !important;
+    background: var(--highlight) !important;
 }
 
 .form-group.success input 
