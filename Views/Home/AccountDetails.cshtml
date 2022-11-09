@@ -71,10 +71,10 @@
             <div class="form-group row padding-light">
                 <label for="typeInput" class="col-xl-2 col-form-label">Typ</label>
                 <div class="col-xl-10">
-                    <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Role" id="typeInput" selected="">
+                    <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Role" id="roleInput">
                         @for (int i = 0; i < types.Count; i++)
                         {
-                            if (@context.HttpContext.Session.GetString(SessionVariables.Role).Equals(types[i]))
+                            if (user.ROLE == DatabaseTranslator.Access.FirstOrDefault(x => x.Value == types[i]).Key)
                             {
                                 <option selected="selected" value="@i">@types[i]</option>
                             }
@@ -89,7 +89,7 @@
         }
         <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">ULOŽIŤ</button>
     </form>
-    <a class="warning-color light-text">@ViewBag.Reply</a>
+    <a class="success-color light-text">@ViewBag.Reply</a>
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />

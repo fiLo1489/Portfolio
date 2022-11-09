@@ -30,7 +30,15 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult FormSubmit()
         {
-            return View();
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            {
+                ViewBag.Reply = "žiadosť bola odoslaná";
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
@@ -190,7 +198,7 @@ namespace SemestralnaPraca.Controllers
                 user.SURNAME = surname;
                 user.PHONE = phone;
                 user.PASSWORD = password;
-                user.ROLE = role;
+                user.ROLE = (role + 1);
 
                 DataResolver.UpdateUser(user);
 
