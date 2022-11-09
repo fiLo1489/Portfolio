@@ -1,6 +1,5 @@
 ﻿form.addEventListener('submit', e =>
 {
-	const mailValue = document.getElementById('mailInput').value.trim();
 	const nameValue = document.getElementById('nameInput').value.trim();
 	const surnameValue = document.getElementById('surnameInput').value.trim();
 	const phoneValue = document.getElementById('phoneInput').value.trim();
@@ -13,28 +12,6 @@
 	var phoneMessage = '';
 	var passwordMessage = '';
 	var passwordConfirmationMessage = '';
-
-	if (mailValue === '')
-	{
-		mailMessage += 'nebol zadaný mail, ';
-	}
-	else
-	{
-		if (injectionProtection(mailValue))
-		{
-			mailMessage += 'zadaný mail obashuje nepovolené kľúčové slová, ';
-		}
-
-		if (!mailValue.includes('@') || !mailValue.includes('.'))
-		{
-			mailMessage += 'zadaný mail má nesprávny tvar, ';
-		}
-
-		if (mailValue.length > 255)
-		{
-			mailMessage += 'zadaný mail je príliš dlhý, ';
-		}
-	}
 
 	if (nameValue === '')
 	{
@@ -60,27 +37,21 @@
 		}
 	}
 
-	if (passwordValue === '')
+	if (passwordValue !== '')
 	{
-		passwordMessage += 'nebolo zadané heslo, ';
-	}
-	else
-	{
-		if (injectionProtection(passwordValue))
-		{
+		if (injectionProtection(passwordValue)) {
 			passwordMessage += 'zadané heslo obashuje nepovolené kľúčové slová, ';
 		}
 
 		if (!(passwordValue.includes('!') || passwordValue.includes('.') || passwordValue.includes('&') || passwordValue.includes('#') || passwordValue.includes('/')) ||
 			!(containsNumbers(passwordValue) &&
 				hasLowerCase(passwordValue) &&
-				hasUpperCase(passwordValue)))
-		{
+				hasUpperCase(passwordValue))) {
 			passwordMessage += 'heslo musí obsahovať veľký a malý znak, číslo a bezpečnostný znak (! . & # /), ';
 		}
 	}
 
-	if (passwordConfirmationValue === '')
+	if (passwordConfirmationValue === '' && passwordValue !== '')
 	{
 		passwordConfirmationMessage += 'nebolo zadané potvrdenie hesla';
 	}
@@ -92,21 +63,11 @@
 		}
 	}
 
-	unsetFor('mail');
 	unsetFor('name');
 	unsetFor('surname');
 	unsetFor('phone');
 	unsetFor('password');
 	unsetFor('passwordConfirmation');
-
-	if (mailMessage === '')
-	{
-		setSuccessFor('mail');
-	}
-	else
-	{
-		setErrorFor('mail', mailMessage.substring(0, mailMessage.length - 2));
-	}
 
 	if (nameMessage === '')
 	{
@@ -155,7 +116,7 @@
 
 	var submit;
 
-	if (mailMessage === '' && phoneMessage === '' && passwordMessage === '' && passwordConfirmationMessage === '')
+	if (nameMessage === '' && surnameMessage === '' && phoneMessage === '' && passwordMessage === '' && passwordConfirmationMessage === '')
 	{
 		submit = true;
 	}

@@ -1,20 +1,21 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
-using SemestralnaPraca.Views.Components;
+using System.Data;
 using System.Text;
+using System.Xml.Linq;
 
 namespace SemestralnaPraca.Controllers
 {
     public static class DataResolver
     {
+        public static string connectionString => new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+
         public static List<PhotoModel> GetGallery(string category)
         {
             List<PhotoModel> horizontalPhotos = new List<PhotoModel>();
             List<PhotoModel> verticalPhotos = new List<PhotoModel>();
 
-            string query = "select * from PHOTOS where CATEGORY='" + category + "'";
-            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+            string query = ("select * from PHOTOS where CATEGORY='" + category + "'");
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -94,8 +95,7 @@ namespace SemestralnaPraca.Controllers
         {
             List<UserModel> users = new List<UserModel>();
 
-            string query = "select * from CREDENTIALS where MAIL != '" + current + "' and ROLE <= '" + role + "'";
-            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+            string query = ("select * from CREDENTIALS where MAIL != '" + current + "' and ROLE <= '" + role + "'");
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -124,12 +124,9 @@ namespace SemestralnaPraca.Controllers
             return users;
         }
 
-        public static UserModel GetAccount(string mail)
+        public static UserModel GetUser(string mail)
         {
-            UserModel account = new UserModel();
-
-            string query = "select * from CREDENTIALS where MAIL='" + mail + "'";
-            string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
+            string query = ("select * from CREDENTIALS where MAIL='" + mail + "'");
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -160,6 +157,92 @@ namespace SemestralnaPraca.Controllers
                     }
                 }
             }
+        }
+
+        public static void UpdateUser(UserModel user)
+        {
+            string query = ("update CREDENTIALS set NAME = '" + user.NAME + "', SURNAME = '" + user.SURNAME + "', PHONE = '" 
+                + user.PHONE + "', ROLE = '" + user.ROLE + "'");
+
+            if (!string.IsNullOrEmpty(user.PASSWORD))
+            {
+                query += (", PASSWORD = '" + user.PASSWORD + "'");
+            }
+
+            query += (" where MAIL = '" + user.MAIL + "'");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void DeleteUser(string mail)
+        {
+            string query = ("delete from CREDENTIALS where MAIL='" + mail + "'");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void InsertRequest(string user, int category, string description)
+        {
+            string query = ("insert into REQUESTS values " +
+                    "('" + user + "', '" + DatabaseTranslator.Categories.ElementAt(category).Key + "', '1', '" + description + "')");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static bool InsertUser(UserModel user)
+        {
+            bool exists = false;
+            
+            string existsQuery = "select count(*) from CREDENTIALS where MAIL='" + user.MAIL + "'";
+            string registerQuery = "insert into CREDENTIALS values " +
+            "('" + user.MAIL + "', '" + DataResolver.Hash(user.PASSWORD) + "', '" + user.NAME + "', '" + user.SURNAME + "', '" + user.PHONE + "', '" + user.ROLE + "')";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand cmd = new SqlCommand(existsQuery, connection))
+                {
+                    exists = (Convert.ToInt32(cmd.ExecuteScalar()) != 0 ? true : false);
+                }
+
+                if (!exists)
+                {
+                    using (SqlCommand cmd = new SqlCommand(registerQuery, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    
+                }
+                else
+                {
+                    
+                }
+            }
+
+            return exists;
         }
 
         public static List<string> GetCategories()

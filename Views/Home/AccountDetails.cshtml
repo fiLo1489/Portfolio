@@ -7,16 +7,14 @@
     UserModel user;
     if (string.IsNullOrEmpty(ViewBag.User))
     {
-        user = DataResolver.GetAccount(context.HttpContext.Session.GetString(SessionVariables.Mail));
+        user = DataResolver.GetUser(context.HttpContext.Session.GetString(SessionVariables.Mail));
     }
     else
     {
-        user = DataResolver.GetAccount(ViewBag.User);
+        user = DataResolver.GetUser(ViewBag.User);
     }
 
     List<string> types = DatabaseTranslator.Access.Values.ToList();
-    types.Remove(context.HttpContext.Session.GetString(SessionVariables.Role));
-    types.Add(context.HttpContext.Session.GetString(SessionVariables.Role));
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
@@ -25,7 +23,7 @@
     <h1 class="heavy-text mb-3">
         ÚDAJE
     </h1>
-    <form id="form" method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Register">
+    <form id="form" method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="AccountDetails">
         <div id="mail" class="form-group row padding-light">
             <label for="mailInput" class="col-xl-2 col-form-label">Mail</label>
             <div class="col-xl-10">
@@ -73,10 +71,17 @@
             <div class="form-group row padding-light">
                 <label for="typeInput" class="col-xl-2 col-form-label">Typ</label>
                 <div class="col-xl-10">
-                    <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Category" id="typeInput">
-                        @for (int i = types.Count - 1; i >= 0; i--)
+                    <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Role" id="typeInput" selected="">
+                        @for (int i = 0; i < types.Count; i++)
                         {
-                            <option value="@i">@types[i]</option>
+                            if (@context.HttpContext.Session.GetString(SessionVariables.Role).Equals(types[i]))
+                            {
+                                <option selected="selected" value="@i">@types[i]</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@types[i]</option>
+                            }
                         }
                     </select>
                 </div>
@@ -89,4 +94,4 @@
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
 
-<script src="~/js/registervalidation.js"></script>
+<script src="~/js/detailsvalidation.js"></script>

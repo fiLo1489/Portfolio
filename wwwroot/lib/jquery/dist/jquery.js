@@ -6747,7 +6747,9 @@ function boxModelAdjustment( elem, dimension, box, isBorderBox, styles, computed
 		}
 	}
 
-	// Account for positive content-box scroll gutter when requested by providing computedVal
+	// 
+
+ for positive content-box scroll gutter when requested by providing computedVal
 	if ( !isBorderBox && computedVal >= 0 ) {
 
 		// offsetWidth/offsetHeight is a rounded sum of content, padding, scroll gutter, and border
