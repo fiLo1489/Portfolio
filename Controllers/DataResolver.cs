@@ -12,237 +12,287 @@ namespace SemestralnaPraca.Controllers
 
         public static List<PhotoModel> GetGallery(string category)
         {
-            List<PhotoModel> horizontalPhotos = new List<PhotoModel>();
-            List<PhotoModel> verticalPhotos = new List<PhotoModel>();
-
-            string query = ("select * from PHOTOS where CATEGORY='" + category + "'");
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                List<PhotoModel> horizontalPhotos = new List<PhotoModel>();
+                List<PhotoModel> verticalPhotos = new List<PhotoModel>();
+
+                string query = ("select * from PHOTOS where CATEGORY='" + category + "'");
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
-                        while (reader.Read())
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            PhotoModel photo = new PhotoModel();
-
-                            photo.TITLE = reader[1].ToString();
-                            photo.CATEGORY = reader[2].ToString();
-                            photo.ORIENTATION = DatabaseTranslator.Orientation[reader[3].ToString()];
-
-                            if (photo.ORIENTATION.Equals("horizontal"))
+                            while (reader.Read())
                             {
-                                horizontalPhotos.Add(photo);
-                            }
-                            else
-                            {
-                                verticalPhotos.Add(photo);
+                                PhotoModel photo = new PhotoModel();
+
+                                photo.TITLE = reader[1].ToString();
+                                photo.CATEGORY = reader[2].ToString();
+                                photo.ORIENTATION = DatabaseTranslator.Orientation[reader[3].ToString()];
+
+                                if (photo.ORIENTATION.Equals("horizontal"))
+                                {
+                                    horizontalPhotos.Add(photo);
+                                }
+                                else
+                                {
+                                    verticalPhotos.Add(photo);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            List<PhotoModel> photos = new List<PhotoModel>();
+                List<PhotoModel> photos = new List<PhotoModel>();
 
-            int verticalSize = ((verticalPhotos.Count % 2 == 0) ? verticalPhotos.Count : (verticalPhotos.Count - 1));
-            int horizontalSize = ((horizontalPhotos.Count % 2 == 0) ? horizontalPhotos.Count : (horizontalPhotos.Count - 1));
-            int verticalCounter = 0;
-            int horizontalCounter = 0;
+                int verticalSize = ((verticalPhotos.Count % 2 == 0) ? verticalPhotos.Count : (verticalPhotos.Count - 1));
+                int horizontalSize = ((horizontalPhotos.Count % 2 == 0) ? horizontalPhotos.Count : (horizontalPhotos.Count - 1));
+                int verticalCounter = 0;
+                int horizontalCounter = 0;
 
-            bool orientation = false;
+                bool orientation = false;
 
-            while ((verticalCounter + horizontalCounter) != (verticalSize + horizontalSize))
-            {
-                if (orientation)
+                while ((verticalCounter + horizontalCounter) != (verticalSize + horizontalSize))
                 {
-                    if (verticalSize != verticalCounter)
+                    if (orientation)
                     {
-                        photos.Add(verticalPhotos[verticalCounter]);
-                        photos.Add(verticalPhotos[verticalCounter + 1]);
-                        verticalCounter = (verticalCounter + 2);
+                        if (verticalSize != verticalCounter)
+                        {
+                            photos.Add(verticalPhotos[verticalCounter]);
+                            photos.Add(verticalPhotos[verticalCounter + 1]);
+                            verticalCounter = (verticalCounter + 2);
+                        }
                     }
+                    else
+                    {
+                        if (horizontalSize != horizontalCounter)
+                        {
+                            photos.Add(horizontalPhotos[horizontalCounter]);
+                            photos.Add(horizontalPhotos[horizontalCounter + 1]);
+                            horizontalCounter = (horizontalCounter + 2);
+                        }
+                    }
+
+                    orientation = !orientation;
                 }
-                else
+
+                if (verticalCounter != verticalPhotos.Count)
                 {
-                    if (horizontalSize != horizontalCounter)
-                    {
-                        photos.Add(horizontalPhotos[horizontalCounter]);
-                        photos.Add(horizontalPhotos[horizontalCounter + 1]);
-                        horizontalCounter = (horizontalCounter + 2);
-                    }
+                    photos.Add(verticalPhotos[verticalPhotos.Count - 1]);
                 }
 
-                orientation = !orientation;
-            }
+                if (horizontalCounter != horizontalPhotos.Count)
+                {
+                    photos.Add(horizontalPhotos[horizontalPhotos.Count - 1]);
+                }
 
-            if (verticalCounter != verticalPhotos.Count)
+                return photos;
+            }
+            catch
             {
-                photos.Add(verticalPhotos[verticalPhotos.Count - 1]);
+                return null;
             }
-
-            if (horizontalCounter != horizontalPhotos.Count)
-            {
-                photos.Add(horizontalPhotos[horizontalPhotos.Count - 1]);
-            }
-
-            return photos;
         }
 
         public static List<UserModel> GetUsers(string current, int role)
         {
-            List<UserModel> users = new List<UserModel>();
-
-            string query = ("select * from CREDENTIALS where MAIL != '" + current + "' and ROLE <= '" + role + "'");
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                List<UserModel> users = new List<UserModel>();
+
+                string query = ("select * from CREDENTIALS where MAIL != '" + current + "' and ROLE <= '" + role + "'");
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
-                        while (reader.Read())
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            UserModel user = new UserModel();
+                            while (reader.Read())
+                            {
+                                UserModel user = new UserModel();
 
-                            user.MAIL = reader[0].ToString();
-                            user.PASSWORD = reader[1].ToString();
-                            user.NAME = reader[2].ToString();
-                            user.SURNAME = reader[3].ToString();
-                            user.PHONE = reader[4].ToString();
-                            user.ROLE = int.Parse(reader[5].ToString());
+                                user.MAIL = reader[0].ToString();
+                                user.PASSWORD = reader[1].ToString();
+                                user.NAME = reader[2].ToString();
+                                user.SURNAME = reader[3].ToString();
+                                user.PHONE = reader[4].ToString();
+                                user.ROLE = int.Parse(reader[5].ToString());
 
-                            users.Add(user);
+                                users.Add(user);
+                            }
                         }
                     }
                 }
-            }
 
-            return users;
+                return users;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static UserModel GetUser(string mail)
         {
-            string query = ("select * from CREDENTIALS where MAIL='" + mail + "'");
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                string query = ("select * from CREDENTIALS where MAIL='" + mail + "'");
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
                     {
-                        if (reader.HasRows)
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            reader.Read();
-                            
-                            UserModel user = new UserModel();
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
 
-                            user.MAIL = reader[0].ToString();
-                            user.PASSWORD = reader[1].ToString();
-                            user.NAME = reader[2].ToString();
-                            user.SURNAME = reader[3].ToString();
-                            user.PHONE = reader[4].ToString();
-                            user.ROLE = int.Parse(reader[5].ToString());
+                                UserModel user = new UserModel();
 
-                            return user;
-                        }
-                        else
-                        {
-                            return null;
+                                user.MAIL = reader[0].ToString();
+                                user.PASSWORD = reader[1].ToString();
+                                user.NAME = reader[2].ToString();
+                                user.SURNAME = reader[3].ToString();
+                                user.PHONE = reader[4].ToString();
+                                user.ROLE = int.Parse(reader[5].ToString());
+
+                                return user;
+                            }
+                            else
+                            {
+                                return null;
+                            }
                         }
                     }
                 }
             }
+            catch
+            {
+                return null;
+            }
         }
 
-        public static void UpdateUser(UserModel user)
+        public static bool UpdateUser(UserModel user)
         {
-            string query = ("update CREDENTIALS set NAME = '" + user.NAME + "', SURNAME = '" + user.SURNAME + "', PHONE = '" 
+            try
+            {
+                string query = ("update CREDENTIALS set NAME = '" + user.NAME + "', SURNAME = '" + user.SURNAME + "', PHONE = '"
                 + user.PHONE + "', ROLE = '" + user.ROLE + "'");
 
-            if (!string.IsNullOrEmpty(user.PASSWORD))
-            {
-                query += (", PASSWORD = '" + user.PASSWORD + "'");
-            }
-
-            query += (" where MAIL = '" + user.MAIL + "'");
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                if (!string.IsNullOrEmpty(user.PASSWORD))
                 {
-                    cmd.ExecuteNonQuery();
+                    query += (", PASSWORD = '" + user.PASSWORD + "'");
                 }
+
+                query += (" where MAIL = '" + user.MAIL + "'");
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
-        public static void DeleteUser(string mail)
+        public static bool DeleteUser(string mail)
         {
-            string query = ("delete from CREDENTIALS where MAIL='" + mail + "'");
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                string query = ("delete from CREDENTIALS where MAIL='" + mail + "'");
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
-        public static void InsertRequest(string user, int category, string description)
+        public static bool InsertRequest(string user, int category, string description)
         {
-            string query = ("insert into REQUESTS values " +
+            try
+            {
+                string query = ("insert into REQUESTS values " +
                     "('" + user + "', '" + DatabaseTranslator.Categories.ElementAt(category).Key + "', '1', '" + description + "')");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+
+                return true;
+            }
+            catch 
+            {
+                return false;
             }
         }
 
         public static bool InsertUser(UserModel user)
         {
-            bool exists = false;
-            
-            string existsQuery = "select count(*) from CREDENTIALS where MAIL='" + user.MAIL + "'";
-            string registerQuery = "insert into CREDENTIALS values " +
-            "('" + user.MAIL + "', '" + DataResolver.Hash(user.PASSWORD) + "', '" + user.NAME + "', '" + user.SURNAME + "', '" + user.PHONE + "', '" + user.ROLE + "')";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Open();
+                bool exists = false;
 
-                using (SqlCommand cmd = new SqlCommand(existsQuery, connection))
-                {
-                    exists = (Convert.ToInt32(cmd.ExecuteScalar()) != 0 ? true : false);
-                }
+                string existsQuery = "select count(*) from CREDENTIALS where MAIL='" + user.MAIL + "'";
+                string registerQuery = "insert into CREDENTIALS values " +
+                    "('" + user.MAIL + "', '" + DataResolver.Hash(user.PASSWORD) + "', '" + user.NAME + "', '" + user.SURNAME + "', '" + user.PHONE + "', '" + user.ROLE + "')";
 
-                if (!exists)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand(registerQuery, connection))
+                    connection.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(existsQuery, connection))
                     {
-                        cmd.ExecuteNonQuery();
+                        exists = (Convert.ToInt32(cmd.ExecuteScalar()) != 0 ? true : false);
                     }
-                    
-                }
-                else
-                {
-                    
-                }
-            }
 
-            return exists;
+                    if (!exists)
+                    {
+                        using (SqlCommand cmd = new SqlCommand(registerQuery, connection))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+                return exists;
+            }
+            catch
+            { 
+                return false;
+            }
         }
 
         public static List<string> GetCategories()
@@ -252,7 +302,7 @@ namespace SemestralnaPraca.Controllers
 
         public static string Hash(string input)
         {
-            if (!string.IsNullOrEmpty(input))
+            try
             {
                 var crypt = new System.Security.Cryptography.SHA256Managed();
                 var output = new System.Text.StringBuilder();
@@ -261,9 +311,10 @@ namespace SemestralnaPraca.Controllers
                 {
                     output.Append(theByte.ToString("x2"));
                 }
+
                 return output.Append("pht").ToString();
             }
-            else
+            catch
             {
                 return string.Empty;
             }

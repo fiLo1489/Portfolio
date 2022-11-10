@@ -18,7 +18,14 @@
     <h1 class="heavy-text mb-3">
         POUŽÍVATELIA
     </h1>
-    <p class="warning-color light-text">@ViewBag.Reply</p>
+    @if (ViewBag.SuccessReply)
+    {
+        <p class="success-color light-text">@ViewBag.SuccessReply</p>
+    }
+    @if (ViewBag.ErrorReply)
+    {
+        <p class="error-color light-text">@ViewBag.ErrorReply</p>
+    }
     @foreach (UserModel item in users)
     {
         <component type="typeof(User)" param-Mail="@(item.MAIL)" render-mode="ServerPrerendered" />

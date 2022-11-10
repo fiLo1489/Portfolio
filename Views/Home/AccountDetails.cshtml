@@ -89,7 +89,14 @@
         }
         <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">ULOŽIŤ</button>
     </form>
-    <a class="success-color light-text">@ViewBag.Reply</a>
+    @if (ViewBag.SuccessReply)
+    {
+        <p class="success-color light-text">@ViewBag.SuccessReply</p>
+    }
+    @if (ViewBag.ErrorReply)
+    {
+        <p class="error-color light-text">@ViewBag.ErrorReply</p>
+    }
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />

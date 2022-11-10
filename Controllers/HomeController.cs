@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
 
@@ -7,9 +8,9 @@ namespace SemestralnaPraca.Controllers
     public class HomeController : Controller
     {
         // TODO doplnenie tabulky a zalozky s navstevovanostou
-        // TODO ajax
-        // TODO hlasky pre operacie do okien
-        
+        // TODO AJAX
+        // TODO novy page pre poziadavky RequestManagement
+
         private readonly IHttpContextAccessor context;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
 
@@ -32,7 +33,6 @@ namespace SemestralnaPraca.Controllers
         {
             if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
             {
-                ViewBag.Reply = "žiadosť bola odoslaná";
                 return View();
             }
             else
@@ -48,9 +48,16 @@ namespace SemestralnaPraca.Controllers
 
             if (!string.IsNullOrEmpty(user))
             {
-                DataResolver.InsertRequest(user, category, description);
+                if (DataResolver.InsertRequest(user, category, description))
+                {
+                    TempData["SuccessReply"] = ("požiadavka bola úspešne zaregistrovaná");
+                }
+                else
+                {
+                    TempData["ErrorReply"] = ("nepodarilo sa vytvoriť požiadavku");
+                }
 
-                return RedirectToAction("Index", "Reuqests");
+                return RedirectToAction("RequestManagement", "Home");
             }
             else
             { 
@@ -73,16 +80,13 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult Register(string mail, string name, string surname, string password, string confirmation, string phone)
         {
-            string reply = string.Empty;
             int role = 1;
-
             ViewBag.Mail = mail;
             ViewBag.Name = name;
             ViewBag.Surname = surname;
             ViewBag.Phone = phone;
 
             UserModel user = new UserModel();
-
             user.MAIL = mail;
             user.NAME = name;
             user.SURNAME= surname;
@@ -92,22 +96,13 @@ namespace SemestralnaPraca.Controllers
 
             if (DataResolver.InsertUser(user))
             {
-                reply += "používateľ so zadaným mailom už existuje, ";
+                ViewBag.Reply += "nepodarilo sa dokončiť rezerváciu, účet so zadaným mailom už existuje";
+                return View();
             }
             else
             {
                 LoginAction(mail, DatabaseTranslator.Access[role]);
-            }
-
-            if (reply.Equals(string.Empty))
-            {
                 return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                reply = reply.Remove(reply.Length - 2);
-                ViewBag.Reply = reply;
-                return View();
             }
         }
 
@@ -126,7 +121,6 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult Login(string mail, string password)
         {
-            string reply = string.Empty;
             ViewBag.Mail = mail;
 
             UserModel user = DataResolver.GetUser(mail);
@@ -141,26 +135,23 @@ namespace SemestralnaPraca.Controllers
                 }
                 else
                 {
-                    reply += "nesprávne zadané heslo";
-
-                    ViewBag.Reply = reply;
-                    return View();
+                    ViewBag.Reply += "nesprávne zadané heslo";
                 }
             }
             else
             {
-                reply += "daný účet neexistuje";
-
-                ViewBag.Reply = reply;
-                return View();
+                ViewBag.Reply += "daný účet neexistuje";
             }
+
+            return View();
         }
 
         public IActionResult UserManagement()
         {
             if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
             {
-                ViewBag.Reply = TempData["Reply"];
+                ViewBag.SuccessReply = TempData["SuccessReply"];
+                ViewBag.ErrorReply = TempData["ErrorReply"];
                 return View();
             }
             else
@@ -200,10 +191,17 @@ namespace SemestralnaPraca.Controllers
                 user.PASSWORD = password;
                 user.ROLE = (role + 1);
 
-                DataResolver.UpdateUser(user);
+                if (DataResolver.UpdateUser(user))
+                {
+                    ViewBag.SuccessReply = "údaje boli uložené";
+                }
+                else
+                {
+                    ViewBag.ErrorReply = "údaje sa nepodarilo uložiť";
+                }
 
                 ViewBag.User = mail;
-                ViewBag.Reply = "údaje boli uložené";
+
                 return View();
             }
         }
@@ -225,11 +223,16 @@ namespace SemestralnaPraca.Controllers
         {
             if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
             {
-                DataResolver.DeleteUser(mail);
+                if (DataResolver.DeleteUser(mail))
+                {
+                    TempData["SuccessReply"] = ("používateľ " + mail + " bol odstránený");
+                }
+                else
+                {
+                    TempData["ErrorReply"] = ("používatela " + mail + " sa nepodarilo odstrániť");
+                }
 
-                TempData["Reply"] = ("používateľ " + mail + " bol odstránený");
-
-                return RedirectToAction("UserManagement", "Home");
+;               return RedirectToAction("UserManagement", "Home");
             }
             else
             {

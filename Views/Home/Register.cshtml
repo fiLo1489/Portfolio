@@ -53,7 +53,10 @@
         </div>
         <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">REGISTROVAŤ</button>
     </form>
-    <a class="error-color light-text">@ViewBag.Reply</a>
+    @if (!string.IsNullOrEmpty(ViewBag.Reply))
+    {
+        <a class="error-color light-text">@ViewBag.Reply</a>
+    }
     <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Login">už mám účet a chcem sa prihlásiť</a>
 </div>
 

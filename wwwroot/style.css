@@ -8,13 +8,11 @@
     --bright: #f0f0f0;
     --dark: #282828;
     --error: #DD0000;
-    --warning: #EEBB00;
     --success: #00AA00;
     --highlight: #505050;
     --heavy: 50px 5vw;
     --medium: 30px;
     --light: 12px;
-    .error-color
 }
 
 img
@@ -104,11 +102,6 @@ html, body
 
 .error-color {
     color: var(--error) !important;
-    text-decoration: none;
-}
-
-.warning-color {
-    color: var(--warning) !important;
     text-decoration: none;
 }
 
