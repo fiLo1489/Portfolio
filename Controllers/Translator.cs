@@ -1,6 +1,6 @@
 ﻿namespace SemestralnaPraca.Controllers
 {
-    public static class DatabaseTranslator
+    public static class Translator
     {
         public static Dictionary<string, string> Orientation = new Dictionary<string, string>()
         {

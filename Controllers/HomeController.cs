@@ -31,7 +31,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult FormSubmit()
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 return View();
             }
@@ -44,11 +44,11 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult FormSubmit(int category, string description)
         {
-            string user = context.HttpContext.Session.GetString(SessionVariables.Mail);
+            string user = context.HttpContext.Session.GetString(Variables.Mail);
 
             if (!string.IsNullOrEmpty(user))
             {
-                if (DataResolver.InsertRequest(user, category, description))
+                if (RequestController.InsertRequest(user, category, description))
                 {
                     TempData["SuccessReply"] = ("požiadavka bola úspešne zaregistrovaná");
                 }
@@ -67,7 +67,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult Register()
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 return View();
             }
@@ -94,21 +94,21 @@ namespace SemestralnaPraca.Controllers
             user.PASSWORD = password;
             user.ROLE= role;
 
-            if (DataResolver.InsertUser(user))
+            if (UserController.InsertUser(user))
             {
                 ViewBag.Reply += "nepodarilo sa dokončiť rezerváciu, účet so zadaným mailom už existuje";
                 return View();
             }
             else
             {
-                LoginAction(mail, DatabaseTranslator.Access[role]);
+                LoginAction(mail, Translator.Access[role]);
                 return RedirectToAction("Index", "Home");
             }
         }
 
         public IActionResult Login()
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 return View();
             }
@@ -123,13 +123,13 @@ namespace SemestralnaPraca.Controllers
         {
             ViewBag.Mail = mail;
 
-            UserModel user = DataResolver.GetUser(mail);
+            UserModel user = UserController.GetUser(mail);
 
             if (user != null)
             {
-                if (DataResolver.Hash(password) == user.PASSWORD)
+                if (UserController.GetPassword(password) == user.PASSWORD)
                 {
-                    LoginAction(user.MAIL, DatabaseTranslator.Access[user.ROLE]);
+                    LoginAction(user.MAIL, Translator.Access[user.ROLE]);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -148,7 +148,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult UserManagement()
         {
-            if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
             {
                 ViewBag.SuccessReply = TempData["SuccessReply"];
                 ViewBag.ErrorReply = TempData["ErrorReply"];
@@ -162,7 +162,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult AccountDetails() 
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -176,7 +176,7 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult AccountDetails(string mail, string name, string surname, string phone, string password, int role)
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(SessionVariables.Mail)))
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -191,7 +191,7 @@ namespace SemestralnaPraca.Controllers
                 user.PASSWORD = password;
                 user.ROLE = (role + 1);
 
-                if (DataResolver.UpdateUser(user))
+                if (UserController.UpdateUser(user))
                 {
                     ViewBag.SuccessReply = "údaje boli uložené";
                 }
@@ -208,7 +208,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult EditUser(string mail)
         {
-            if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
             {
                 TempData["User"] = mail;
                 return RedirectToAction("AccountDetails", "Home");
@@ -221,9 +221,9 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult DeleteUser(string mail)
         {
-            if (DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key >= 2)
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
             {
-                if (DataResolver.DeleteUser(mail))
+                if (UserController.DeleteUser(mail))
                 {
                     TempData["SuccessReply"] = ("používateľ " + mail + " bol odstránený");
                 }
@@ -274,14 +274,14 @@ namespace SemestralnaPraca.Controllers
 
         private void LoginAction(string mail, string role)
         {
-            context.HttpContext.Session.SetString(SessionVariables.Mail, mail);
-            context.HttpContext.Session.SetString(SessionVariables.Role, role);
+            context.HttpContext.Session.SetString(Variables.Mail, mail);
+            context.HttpContext.Session.SetString(Variables.Role, role);
         }
 
         private void LogoutAction()
         {
-            context.HttpContext.Session.SetString(SessionVariables.Mail, string.Empty);
-            context.HttpContext.Session.SetString(SessionVariables.Role, string.Empty);
+            context.HttpContext.Session.SetString(Variables.Mail, string.Empty);
+            context.HttpContext.Session.SetString(Variables.Role, string.Empty);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

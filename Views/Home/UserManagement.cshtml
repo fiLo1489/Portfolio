@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Správa používateľov";
 
-    List<UserModel> users = DataResolver.GetUsers(context.HttpContext.Session.GetString(SessionVariables.Mail), DatabaseTranslator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(SessionVariables.Role)).Key);
+    List<UserModel> users = DataResolver.GetUsers(context.HttpContext.Session.GetString(Variables.Mail), Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key);
 
     if (users.Count == 0)
     {
