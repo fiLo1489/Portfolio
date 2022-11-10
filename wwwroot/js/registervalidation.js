@@ -175,6 +175,7 @@ function setErrorFor(element, message)
 
 	parent.classList.add('error');
 	children.textContent = message;
+	children.style.visibility = 'visible';
 }
 
 function setSuccessFor(element)
@@ -193,12 +194,14 @@ function unsetFor(element)
 	{
 		parent.classList.remove('error');
 		children.textContent = '';
+		children.style.visibility = 'hidden';
 	}
 
 	if (parent.classList.contains('success'))
 	{
 		parent.classList.remove('success');
 		children.textContent = '';
+		children.style.visibility = 'hidden';
 	}
 }
 

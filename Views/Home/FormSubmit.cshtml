@@ -35,8 +35,25 @@
                 <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" rows="5" name="Description" id="descriptionInput"></textarea>
             </div>
         </div>
+        <div id="date" class="form-group row padding-light">
+            <label for="dateInput" class="col-xl-2 col-form-label">Heslo</label>
+            <div class="col-xl-10">
+                <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput">
+            </div>
+            <a id="dateMessage"></a>
+        </div>
         <button type="submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">ODOSLAŤ</button>
     </form>
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
+    {
+        <p class="success-color light-text">@ViewBag.SuccessReply</p>
+    }
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorReply))
+    {
+        <p class="error-color light-text">@ViewBag.ErrorReply</p>
+    }
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
+
+<script src="~/js/formvalidation.js"></script>

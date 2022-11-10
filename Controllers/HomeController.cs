@@ -42,22 +42,22 @@ namespace SemestralnaPraca.Controllers
         }
 
         [HttpPost]
-        public IActionResult FormSubmit(int category, string description)
+        public IActionResult FormSubmit(int category, string description, string date)
         {
             string user = context.HttpContext.Session.GetString(Variables.Mail);
 
             if (!string.IsNullOrEmpty(user))
             {
-                if (RequestController.InsertRequest(user, category, description))
+                if (RequestController.InsertRequest(user, category, description, date))
                 {
-                    TempData["SuccessReply"] = ("požiadavka bola úspešne zaregistrovaná");
+                    ViewBag.SuccessReply = ("požiadavka bola úspešne zaregistrovaná");
                 }
                 else
                 {
-                    TempData["ErrorReply"] = ("nepodarilo sa vytvoriť požiadavku");
+                    ViewBag.ErrorReply = ("nepodarilo sa vytvoriť požiadavku");
                 }
 
-                return RedirectToAction("RequestManagement", "Home");
+                return View();
             }
             else
             { 

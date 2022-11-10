@@ -4,7 +4,7 @@ namespace SemestralnaPraca.Controllers
 {
     public static class RequestController
     {
-        public static bool InsertRequest(string user, int category, string description)
+        public static bool InsertRequest(string user, int category, string description, string date)
         {
             try
             {
