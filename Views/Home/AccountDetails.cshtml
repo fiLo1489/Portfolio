@@ -89,11 +89,11 @@
         }
         <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">ULOŽIŤ</button>
     </form>
-    @if (ViewBag.SuccessReply)
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
     {
         <p class="success-color light-text">@ViewBag.SuccessReply</p>
     }
-    @if (ViewBag.ErrorReply)
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorReply))
     {
         <p class="error-color light-text">@ViewBag.ErrorReply</p>
     }

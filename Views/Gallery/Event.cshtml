@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Podujatia";
 
-    List<PhotoModel> photos = DataResolver.GetGallery("event");
+    List<PhotoModel> photos = PhotoController.GetGallery("event");
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />

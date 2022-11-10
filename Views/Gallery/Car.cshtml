@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Vozidlá";
 
-    List<PhotoModel> photos = DataResolver.GetGallery("car");
+    List<PhotoModel> photos = PhotoController.GetGallery("car");
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />

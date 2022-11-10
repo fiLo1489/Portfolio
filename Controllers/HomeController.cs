@@ -31,7 +31,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult FormSubmit()
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 return View();
             }

@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Správa používateľov";
 
-    List<UserModel> users = DataResolver.GetUsers(context.HttpContext.Session.GetString(Variables.Mail), Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key);
+    List<UserModel> users = UserController.GetUsers(context.HttpContext.Session.GetString(Variables.Mail), Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key);
 
     if (users.Count == 0)
     {
@@ -18,11 +18,11 @@
     <h1 class="heavy-text mb-3">
         POUŽÍVATELIA
     </h1>
-    @if (ViewBag.SuccessReply)
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
     {
         <p class="success-color light-text">@ViewBag.SuccessReply</p>
     }
-    @if (ViewBag.ErrorReply)
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorReply))
     {
         <p class="error-color light-text">@ViewBag.ErrorReply</p>
     }
