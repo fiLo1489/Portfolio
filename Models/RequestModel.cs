@@ -9,5 +9,6 @@
         public string DESCRIPTION { get; set; }
         public string CREATED { get; set; }
         public string SCHEDULED { get; set; }
+        public string RESULT { get; set; }
     }
 }

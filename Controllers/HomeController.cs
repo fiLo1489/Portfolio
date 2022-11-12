@@ -9,6 +9,7 @@ namespace SemestralnaPraca.Controllers
     public class HomeController : Controller
     {
         // TODO doplnenie spravy poziadaviek
+        // TODO poistka pre reload do cache
         // TODO uprava fotky v o mne v mobilnom rozhrani
         // TODO doplnenie spravy fotiek
         // TODO AJAX
@@ -60,9 +61,15 @@ namespace SemestralnaPraca.Controllers
                 request.SCHEDULED = date;
                 request.USER = user;
 
-                if (RequestController.InsertRequest(request))
+                bool? result = RequestController.InsertRequest(request) == true;
+
+                if (result == true)
                 {
                     ViewBag.SuccessReply = ("požiadavka bola úspešne zaregistrovaná");
+                }
+                else if (result == false)
+                {
+                    ViewBag.ErrorReply = ("požiadavka v daný deň už existuje");
                 }
                 else
                 {
@@ -99,6 +106,7 @@ namespace SemestralnaPraca.Controllers
             ViewBag.Phone = phone;
 
             UserModel user = new UserModel();
+
             user.MAIL = mail;
             user.NAME = name;
             user.SURNAME= surname;
@@ -106,15 +114,22 @@ namespace SemestralnaPraca.Controllers
             user.PASSWORD = password;
             user.ROLE= role;
 
-            if (UserController.InsertUser(user))
+            bool? result = UserController.InsertUser(user);
+
+            if (result == true)
             {
-                ViewBag.Reply += "nepodarilo sa dokončiť rezerváciu, účet so zadaným mailom už existuje";
+                LoginAction(mail, Translator.Access[role]);
+                return RedirectToAction("Index", "Home");
+            }
+            else if (result == false)
+            {
+                ViewBag.Reply += "účet so zadaným mailom už existuje";
                 return View();
             }
             else
             {
-                LoginAction(mail, Translator.Access[role]);
-                return RedirectToAction("Index", "Home");
+                ViewBag.Reply += "nepodarilo sa dokončiť rezerváciu";
+                return View();
             }
         }
 
@@ -174,7 +189,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult RequestManagement()
         {
-            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 ViewBag.SuccessReply = TempData["SuccessReply"];
                 ViewBag.ErrorReply = TempData["ErrorReply"];
@@ -268,7 +283,7 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult EditRequest(string id)
         {
-            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 TempData["Id"] = id;
                 return RedirectToAction("RequestEdit", "Home");

@@ -1,9 +1,15 @@
 ﻿@using SemestralnaPraca.Controllers
+@inject IHttpContextAccessor context;
 
 @{
     ViewData["Title"] = "Žiadosť";
 
+    List<string> statuses = Translator.Status.Values.ToList();
+
     RequestModel request = RequestController.GetRequest(ViewBag.Id);
+
+    bool adminAccess = (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false;
+    bool statusAccess = (request.STATUS.Equals(Translator.Status[1])) ? true : false;
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
@@ -21,32 +27,92 @@
         <div id="id" class="form-group row padding-light">
             <label for="idInput" class="col-xl-2 col-form-label">Číslo žiadosti</label>
             <div class="col-xl-10">
-                <textarea class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" rows="5" name="id" id="idInput" readonly="readonly"></textarea>
+                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="id" id="idInput" readonly value="@request.ID"></input>
             </div>
         </div>
+        <div id="category" class="form-group row padding-light">
+            <label for="categoryInput" class="col-xl-2 col-form-label">Kategória</label>
+            <div class="col-xl-10">
+                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="category" id="categoryInput" readonly value="@request.CATEGORY"></input>
+            </div>
+        </div>
+        @if(adminAccess)
+        {
+            <div id="user" class="form-group row padding-light">
+                <label for="userInput" class="col-xl-2 col-form-label">Vytvoril</label>
+                <div class="col-xl-10">
+                    <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="user" id="userInput" readonly value="@request.USER"></input>
+                </div>
+            </div>
+        }
         <div id="created" class="form-group row padding-light">
             <label for="createdInput" class="col-xl-2 col-form-label">Vytvorené</label>
             <div class="col-xl-10">
-                <textarea class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" rows="5" name="created" id="createdInput" readonly="readonly"></textarea>
+                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="created" id="createdInput" readonly value="@request.CREATED"></input>
             </div>
         </div>
-
-
-
-        @*<div id="description" class="form-group row padding-light">
-            <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
-            <div class="col-xl-10">
-                <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" rows="5" name="Description" id="descriptionInput"></textarea>
+        @if(adminAccess || statusAccess)
+        {
+            <div id="description" class="form-group row padding-light">
+                <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
+                <div class="col-xl-10">
+                    <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" rows="5" name="Description" id="descriptionInput"></textarea>
+                </div>
+                <a id="descriptionMessage"></a>
             </div>
-            <a id="descriptionMessage"></a>
-        </div>
-        <div id="date" class="form-group row padding-light">
-            <label for="dateInput" class="col-xl-2 col-form-label">Heslo</label>
-            <div class="col-xl-10">
-                <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput" required pattern="\d{4}-\d{2}-\d{2}">
+            <div id="date" class="form-group row padding-light">
+                <label for="dateInput" class="col-xl-2 col-form-label">Plánované</label>
+                <div class="col-xl-10">
+                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput">
+                </div>
+                <a id="dateMessage"></a>
             </div>
-            <a id="dateMessage"></a>
-        </div>*@
+        }
+        else
+        {
+            <div id="description" class="form-group row padding-light">
+                <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
+                <div class="col-xl-10">
+                    <textarea class="form-control light-border bright-border dark-background bright-color rounded-0 highlight-background" rows="5" name="Description" id="descriptionInput" readonly></textarea>
+                </div>
+                <a id="descriptionMessage"></a>
+            </div>
+            <div id="date" class="form-group row padding-light">
+                <label for="dateInput" class="col-xl-2 col-form-label">Plánované</label>
+                <div class="col-xl-10">
+                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date highlight-background" name="Date" id="dateInput" readonly>
+                </div>
+                <a id="dateMessage"></a>
+            </div>
+        }
+
+
+
+        @*@if(adminAccess)
+        {
+            <div class="form-group row padding-light">
+                <label for="statusInput" class="col-xl-2 col-form-label">Status</label>
+                <div class="col-xl-10">
+                    <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Status" id="statusInput">
+                        @for (int i = 0; i < statuses.Count; i++)
+                        {
+                            if (request.STATUS == Translator.Access.FirstOrDefault(x => x.Value == types[i]).Key)
+                            {
+                                <option selected="selected" value="@i">@types[i]</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@types[i]</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+        else
+        {
+            
+        }*@
 
 
 

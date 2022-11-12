@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using NuGet.Protocol.Plugins;
 using SemestralnaPraca.Models;
-using System.Data;
-using System.Security.Policy;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -13,8 +12,8 @@ namespace SemestralnaPraca.Controllers
             {
                 List<RequestModel> requests = new List<RequestModel>();
 
-                string query = ("select ID, USER, CATEGORY, STATUS, DESCRIPTION, " +
-                    "FORMAT (CREATED, 'dd-MM-yyyy'), FORMAT (SCHEDULED, 'dd-MM-yyyy') from REQUESTS order by SCHEDULED desc");
+                string query = ("select ID, [USER], CATEGORY, STATUS, DESCRIPTION, " +
+                    "FORMAT (CREATED, 'dd-MM-yyyy'), FORMAT (SCHEDULED, 'dd-MM-yyyy'), RESULT from REQUESTS order by SCHEDULED desc");
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {
@@ -30,10 +29,11 @@ namespace SemestralnaPraca.Controllers
                                 request.ID= int.Parse(reader[0].ToString());
                                 request.USER = reader[1].ToString();
                                 request.CATEGORY = Translator.Categories[reader[2].ToString()];
-                                request.STATUS = reader[3].ToString();
+                                request.STATUS = Translator.Status[int.Parse(reader[3].ToString())];
                                 request.DESCRIPTION = reader[4].ToString();
                                 request.CREATED = reader[5].ToString();
                                 request.SCHEDULED = reader[6].ToString();
+                                request.RESULT = reader[7].ToString();
 
                                 requests.Add(request);
                             }
@@ -53,7 +53,8 @@ namespace SemestralnaPraca.Controllers
         {
             try
             {
-                string query = ("select * from REQUESTS where ID = '" + id + "'");
+                string query = ("select ID, [USER], CATEGORY, STATUS, DESCRIPTION, " +
+                    "FORMAT (CREATED, 'dd-MM-yyyy'), FORMAT (SCHEDULED, 'dd-MM-yyyy'), RESULT from REQUESTS where ID = '" + id + "'");
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {
@@ -71,10 +72,11 @@ namespace SemestralnaPraca.Controllers
                                 request.ID = int.Parse(reader[0].ToString());
                                 request.USER = reader[1].ToString();
                                 request.CATEGORY = Translator.Categories[reader[2].ToString()];
-                                request.STATUS = reader[3].ToString();
+                                request.STATUS = Translator.Status[int.Parse(reader[3].ToString())];
                                 request.DESCRIPTION = reader[4].ToString();
                                 request.CREATED = reader[5].ToString();
                                 request.SCHEDULED = reader[6].ToString();
+                                request.RESULT = reader[7].ToString();
 
                                 return request;
                             }
@@ -92,7 +94,7 @@ namespace SemestralnaPraca.Controllers
             }
         }
         
-        public static bool InsertRequest(RequestModel request)
+        public static bool? InsertRequest(RequestModel request)
         {
             try
             {
@@ -100,8 +102,8 @@ namespace SemestralnaPraca.Controllers
                 
                 string availableQuery = ("select count(*) from REQUESTS where SCHEDULED='" + request.SCHEDULED + "'");
                 string createQuery = ("insert into REQUESTS values " +
-                    "('" + request.USER + "', '" + request.CATEGORY + "', '1', " + (string.IsNullOrEmpty(request.DESCRIPTION) ? "null" : ("'" + request.DESCRIPTION+ "'")) + ", getdate(), "
-                    + (string.IsNullOrEmpty(request.SCHEDULED) ? "null)" : ("'" + request.SCHEDULED + "')")));
+                    "('" + request.USER + "', '" + request.CATEGORY + "', '1', " + (string.IsNullOrEmpty(request.DESCRIPTION) ? "null" : ("'" + request.DESCRIPTION+ "'")) + 
+                    ", getdate(), '" + request.SCHEDULED + "', " + (string.IsNullOrEmpty(request.RESULT) ? "null)" : ("'" + request.RESULT + "')")));
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {
@@ -125,7 +127,7 @@ namespace SemestralnaPraca.Controllers
             }
             catch
             {
-                return false;
+                return null;
             }
         }
 

@@ -142,7 +142,7 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public static bool InsertUser(UserModel user)
+        public static bool? InsertUser(UserModel user)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace SemestralnaPraca.Controllers
             }
             catch
             {
-                return false;
+                return null;
             }
         }
 
