@@ -1,18 +1,19 @@
 ﻿@using SemestralnaPraca.Controllers
 
 @{
-    ViewData["Title"] = "Formulár";
+    ViewData["Title"] = "Žiadosť";
 
-    List<string> categories = PhotoController .GetCategories();
+    List<string> categories = PhotoController.GetCategories();
+    RequestModel request = RequestController.GetRequest(ViewBag.Id);
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
 
 <div class="dark-background padding-heavy text-center light-text bright-color">
     <h1 class="heavy-text mb-3">
-        MÁM ZÁUJEM O FOTENIE
+        ŽIADOSŤ
     </h1>
-    <p class="light-text padding-medium">
+    @*<p class="light-text padding-medium">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus ex quis dolor ullamcorper, quis
         hendrerit est rutrum. Morbi quis ex luctus, mollis ipsum id, lobortis metus. Vestibulum nec arcu mi.
         In at sem nibh. In pulvinar mollis lacus, ac hendrerit diam convallis sit amet.
@@ -22,7 +23,7 @@
             <label for="categoryInput" class="col-xl-2 col-form-label">Kategória</label>
             <div class="col-xl-10">
                 <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Category" id="categoryInput">
-                    @for(int i = 0; i < categories.Count; i++)
+                    @for (int i = 0; i < categories.Count; i++)
                     {
                         <option value="@i">@categories[i]</option>
                     }
@@ -52,9 +53,9 @@
     @if (!string.IsNullOrEmpty(ViewBag.ErrorReply))
     {
         <p class="error-color light-text">@ViewBag.ErrorReply</p>
-    }
+    }*@
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
 
-<script src="~/js/formvalidation.js"></script>
+@*<script src="~/js/formvalidation.js"></script>*@

@@ -50,7 +50,7 @@ namespace SemestralnaPraca.Controllers
         {
             try
             {
-                string query = ("select * from CREDENTIALS where MAIL='" + mail + "'");
+                string query = ("select * from CREDENTIALS where MAIL = '" + mail + "'");
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {

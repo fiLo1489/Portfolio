@@ -2,13 +2,13 @@
 @inject IHttpContextAccessor context;
 
 @{
-    ViewData["Title"] = "Správa používateľov";
+    ViewData["Title"] = "Správa žiadostí";
 
-    List<UserModel> users = UserController.GetUsers(context.HttpContext.Session.GetString(Variables.Mail), Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key);
+    List<RequestModel> requests = RequestController.GetRequests();
 
-    if (users == null || users.Count == 0)
+    if (requests == null || requests.Count == 0)
     {
-        ViewBag.Reply = "neexistujú používatelia";
+        ViewBag.Reply = "neexistujú požiadavky";
     }
 }
 
@@ -16,7 +16,7 @@
 
 <div class="dark-background padding-heavy text-center light-text bright-color">
     <h1 class="heavy-text mb-3">
-        POUŽÍVATELIA
+        ŽIADOSTI
     </h1>
     @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
     {
@@ -26,9 +26,9 @@
     {
         <p class="error-color light-text">@ViewBag.ErrorReply</p>
     }
-    @foreach (UserModel item in users)
+    @foreach (RequestModel item in requests)
     {
-        <component type="typeof(User)" param-Mail="@(item.MAIL)" param-FullName="@(item.NAME + " " + item.SURNAME)" render-mode="ServerPrerendered" />
+        <component type="typeof(Request)" param-Category="@(item.CATEGORY)" param-Date="@(item.SCHEDULED)" param-Id="@(item.ID)" render-mode="ServerPrerendered" />
     }
 </div>
 

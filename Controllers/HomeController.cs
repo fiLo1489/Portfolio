@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SemestralnaPraca.Models;
+using System.Data;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO uprava databazy pre poziadavky
         // TODO doplnenie spravy poziadaviek
-        // TODO doplnenie správy fotiek
+        // TODO doplnenie spravy fotiek
         // TODO AJAX
         // TODO doplnenie tabulky a zalozky s navstevovanostou
         // TODO validacia HTML
@@ -51,7 +52,14 @@ namespace SemestralnaPraca.Controllers
 
             if (!string.IsNullOrEmpty(user))
             {
-                if (RequestController.InsertRequest(user, category, description, date))
+                RequestModel request = new RequestModel();
+
+                request.CATEGORY = Translator.Categories.ElementAt(category).Key;
+                request.DESCRIPTION = description;
+                request.SCHEDULED = date;
+                request.USER = user;
+
+                if (RequestController.InsertRequest(request))
                 {
                     ViewBag.SuccessReply = ("požiadavka bola úspešne zaregistrovaná");
                 }
@@ -163,6 +171,20 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
+        public IActionResult RequestManagement()
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                ViewBag.SuccessReply = TempData["SuccessReply"];
+                ViewBag.ErrorReply = TempData["ErrorReply"];
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
         public IActionResult AccountDetails() 
         {
             if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
@@ -235,11 +257,66 @@ namespace SemestralnaPraca.Controllers
                     TempData["ErrorReply"] = ("používatela " + mail + " sa nepodarilo odstrániť");
                 }
 
-;               return RedirectToAction("UserManagement", "Home");
+                return RedirectToAction("UserManagement", "Home");
             }
             else
             {
                 return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult EditRequest(string id)
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                TempData["Id"] = id;
+                return RedirectToAction("FormEdit", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult DeleteRequest(int id)
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                if (RequestController.DeleteRequest(id))
+                {
+                    TempData["SuccessReply"] = ("požiadavka číslo" + id + " bola odstránená");
+                }
+                else
+                {
+                    TempData["ErrorReply"] = ("požiadavku číslo " + id + " sa nepodarilo odstrániť");
+                }
+
+                return RedirectToAction("RequestManagement", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult FormEdit()
+        {
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(TempData["Id"].ToString()))
+                {
+                    ViewBag.Id = TempData["Id"];
+
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("RequestManagement", "Home");
+                }
             }
         }
 

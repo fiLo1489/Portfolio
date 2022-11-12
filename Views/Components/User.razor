@@ -1,6 +1,9 @@
 ﻿<div class="light-border bright-border row margin-light">
-    <div class="col-md-10 padding-light">
+    <div class="col-md-5 padding-light">
         <a class="bright-color light-text padding-light">@Mail</a>
+    </div>
+    <div class="col-md-5 padding-light">
+        <a class="bright-color light-text padding-light">@FullName</a>
     </div>
     <div class="col-md-1 padding-light">
         <a class="bright-color light-text padding-light" href="/Home/EditUser?mail=@Mail">
@@ -18,4 +21,7 @@
 {
     [Parameter]
     public string Mail { get; set; }
+
+    [Parameter]
+    public string FullName { get; set; }
 }

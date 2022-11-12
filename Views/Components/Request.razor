@@ -1,0 +1,30 @@
+﻿<div class="light-border bright-border row margin-light">
+    <div class="col-md-5 padding-light">
+        <a class="bright-color light-text padding-light">@Category</a>
+    </div>
+    <div class="col-md-5 padding-light">
+        <a class="bright-color light-text padding-light">@Date</a>
+    </div>
+    <div class="col-md-1 padding-light">
+        <a class="bright-color light-text padding-light" href="/Home/EditRequest?mail=@Id">
+            <i class="bi bi-pen"></i>
+        </a>
+    </div>
+    <div class="col-md-1 padding-light" >
+        <a class="bright-color light-text padding-light" href="/Home/DeleteRequest?mail=@Id">
+            <i class="bi bi-trash3"></i>
+        </a>
+    </div>
+</div>
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public string Category { get; set; }
+
+    [Parameter]
+    public string Date { get; set; }
+}
