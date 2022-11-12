@@ -10,10 +10,14 @@
 
 	if (!isNaN(dateValue))
 	{
+		dateMessage += 'nebol zadaný dátum';
+	}
+	else
+	{
 		if (todayValue > dateValue)
 		{
 			dateMessage += 'dátum musí byť budúci';
-		}
+		}	
 	}
 
 	if (descriptionValue !== '')
@@ -47,14 +51,17 @@
 
 	var submit;
 
-	if (descriptionMessage === '' && dateMessage === '') {
+	if (descriptionMessage === '' && dateMessage === '')
+	{
 		submit = true;
 	}
-	else {
+	else
+	{
 		submit = false;
 	}
 
-	if (!submit) {
+	if (!submit)
+	{
 		e.preventDefault();
 	}
 });

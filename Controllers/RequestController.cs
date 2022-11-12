@@ -49,7 +49,7 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public static RequestModel GetRequest(int id)
+        public static RequestModel GetRequest(string id)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public static bool DeleteRequest(int id)
+        public static bool DeleteRequest(string id)
         {
             try
             {

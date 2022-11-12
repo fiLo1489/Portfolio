@@ -10,7 +10,8 @@
 	{
 		mailMessage += 'nebol zadaný mail, ';
 	}
-	else {
+	else
+	{
 		if (mailValue.includes('insert ') || mailValue.includes('select ') || mailValue.includes('update ') || mailValue.includes('delete '))
 		{
 			mailMessage += 'zadaný mail obashuje nepovolené kľúčové slová (select alter update delete), ';

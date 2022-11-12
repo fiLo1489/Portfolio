@@ -9,6 +9,7 @@ namespace SemestralnaPraca.Controllers
     public class HomeController : Controller
     {
         // TODO doplnenie spravy poziadaviek
+        // TODO uprava fotky v o mne v mobilnom rozhrani
         // TODO doplnenie spravy fotiek
         // TODO AJAX
         // TODO doplnenie tabulky a zalozky s navstevovanostou
@@ -270,7 +271,7 @@ namespace SemestralnaPraca.Controllers
             if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
             {
                 TempData["Id"] = id;
-                return RedirectToAction("FormEdit", "Home");
+                return RedirectToAction("RequestEdit", "Home");
             }
             else
             {
@@ -278,7 +279,7 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public IActionResult DeleteRequest(int id)
+        public IActionResult DeleteRequest(string id)
         {
             if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
             {
@@ -299,25 +300,14 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public IActionResult FormEdit()
+        public IActionResult RequestEdit()
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(TempData["Id"].ToString()))
-                {
-                    ViewBag.Id = TempData["Id"];
+            string test = string.Empty;
+            
+            ViewBag.Id = TempData["Id"];
+            return View();
 
-                    return View();
-                }
-                else
-                {
-                    return RedirectToAction("RequestManagement", "Home");
-                }
-            }
+            // TODO dokoncit
         }
 
         public IActionResult Logout()

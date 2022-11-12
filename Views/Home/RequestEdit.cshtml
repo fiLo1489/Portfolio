@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Žiadosť";
 
-    List<string> categories = PhotoController.GetCategories();
     RequestModel request = RequestController.GetRequest(ViewBag.Id);
 }
 
@@ -13,24 +12,28 @@
     <h1 class="heavy-text mb-3">
         ŽIADOSŤ
     </h1>
-    @*<p class="light-text padding-medium">
+    <p class="light-text padding-medium">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus ex quis dolor ullamcorper, quis
         hendrerit est rutrum. Morbi quis ex luctus, mollis ipsum id, lobortis metus. Vestibulum nec arcu mi.
         In at sem nibh. In pulvinar mollis lacus, ac hendrerit diam convallis sit amet.
     </p>
     <form id="form" method="post" enctype="multipart/form-data" href="Home/FormSubmit">
-        <div id="category" class="form-group row padding-light">
-            <label for="categoryInput" class="col-xl-2 col-form-label">Kategória</label>
+        <div id="id" class="form-group row padding-light">
+            <label for="idInput" class="col-xl-2 col-form-label">Číslo žiadosti</label>
             <div class="col-xl-10">
-                <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Category" id="categoryInput">
-                    @for (int i = 0; i < categories.Count; i++)
-                    {
-                        <option value="@i">@categories[i]</option>
-                    }
-                </select>
+                <textarea class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" rows="5" name="id" id="idInput" readonly="readonly"></textarea>
             </div>
         </div>
-        <div id="description" class="form-group row padding-light">
+        <div id="created" class="form-group row padding-light">
+            <label for="createdInput" class="col-xl-2 col-form-label">Vytvorené</label>
+            <div class="col-xl-10">
+                <textarea class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" rows="5" name="created" id="createdInput" readonly="readonly"></textarea>
+            </div>
+        </div>
+
+
+
+        @*<div id="description" class="form-group row padding-light">
             <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
             <div class="col-xl-10">
                 <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" rows="5" name="Description" id="descriptionInput"></textarea>
@@ -43,8 +46,11 @@
                 <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput" required pattern="\d{4}-\d{2}-\d{2}">
             </div>
             <a id="dateMessage"></a>
-        </div>
-        <button type="submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">ODOSLAŤ</button>
+        </div>*@
+
+
+
+        <button type="submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">UPRAVIŤ</button>
     </form>
     @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
     {
@@ -53,9 +59,9 @@
     @if (!string.IsNullOrEmpty(ViewBag.ErrorReply))
     {
         <p class="error-color light-text">@ViewBag.ErrorReply</p>
-    }*@
+    }
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
 
-@*<script src="~/js/formvalidation.js"></script>*@
+<!--TODO validacny skript-->
