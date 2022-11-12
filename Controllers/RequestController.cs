@@ -13,7 +13,7 @@ namespace SemestralnaPraca.Controllers
                 List<RequestModel> requests = new List<RequestModel>();
 
                 string query = ("select ID, [USER], CATEGORY, STATUS, DESCRIPTION, " +
-                    "FORMAT (CREATED, 'dd-MM-yyyy'), FORMAT (SCHEDULED, 'dd-MM-yyyy'), RESULT from REQUESTS order by SCHEDULED desc");
+                    "FORMAT (CREATED, 'dd/MM/yyyy'), FORMAT (SCHEDULED, 'dd/MM/yyyy'), RESULT from REQUESTS order by SCHEDULED desc");
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {
@@ -54,7 +54,7 @@ namespace SemestralnaPraca.Controllers
             try
             {
                 string query = ("select ID, [USER], CATEGORY, STATUS, DESCRIPTION, " +
-                    "FORMAT (CREATED, 'dd-MM-yyyy'), FORMAT (SCHEDULED, 'dd-MM-yyyy'), RESULT from REQUESTS where ID = '" + id + "'");
+                    "FORMAT (CREATED, 'dd/MM/yyyy'), FORMAT (SCHEDULED, 'dd/MM/yyyy'), RESULT from REQUESTS where ID = '" + id + "'");
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {

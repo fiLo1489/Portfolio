@@ -8,7 +8,8 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO doplnenie spravy poziadaviek
+        // TODO nemozno odstranit ak je potvrdene
+        // TODO validacny skript pre úpravu formularu
         // TODO poistka pre reload do cache
         // TODO uprava fotky v o mne v mobilnom rozhrani
         // TODO doplnenie spravy fotiek
@@ -317,12 +318,10 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult RequestEdit()
         {
-            string test = string.Empty;
-            
             ViewBag.Id = TempData["Id"];
             return View();
 
-            // TODO dokoncit
+            // TODO pristup
         }
 
         public IActionResult Logout()

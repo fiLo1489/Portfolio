@@ -10,6 +10,9 @@
 
     bool adminAccess = (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false;
     bool statusAccess = (request.STATUS.Equals(Translator.Status[1])) ? true : false;
+
+    string createdFormat = request.CREATED.Split('/')[2] + "-" + request.CREATED.Split('/')[1] + "-" + request.CREATED.Split('/')[0];
+    string scheduledFormat = request.SCHEDULED.Split('/')[2] + "-" + request.SCHEDULED.Split('/')[1] + "-" + request.SCHEDULED.Split('/')[0];
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
@@ -23,17 +26,17 @@
         hendrerit est rutrum. Morbi quis ex luctus, mollis ipsum id, lobortis metus. Vestibulum nec arcu mi.
         In at sem nibh. In pulvinar mollis lacus, ac hendrerit diam convallis sit amet.
     </p>
-    <form id="form" method="post" enctype="multipart/form-data" href="Home/FormSubmit">
+    <form id="form" method="post" enctype="multipart/form-data" href="Home/FormEdit">
         <div id="id" class="form-group row padding-light">
             <label for="idInput" class="col-xl-2 col-form-label">Číslo žiadosti</label>
             <div class="col-xl-10">
-                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="id" id="idInput" readonly value="@request.ID"></input>
+                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="id" id="idInput" readonly value="@request.ID">
             </div>
         </div>
         <div id="category" class="form-group row padding-light">
             <label for="categoryInput" class="col-xl-2 col-form-label">Kategória</label>
             <div class="col-xl-10">
-                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="category" id="categoryInput" readonly value="@request.CATEGORY"></input>
+                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="category" id="categoryInput" readonly value="@request.CATEGORY">
             </div>
         </div>
         @if(adminAccess)
@@ -41,18 +44,26 @@
             <div id="user" class="form-group row padding-light">
                 <label for="userInput" class="col-xl-2 col-form-label">Vytvoril</label>
                 <div class="col-xl-10">
-                    <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="user" id="userInput" readonly value="@request.USER"></input>
+                    <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="user" id="userInput" readonly value="@request.USER">
                 </div>
             </div>
         }
         <div id="created" class="form-group row padding-light">
             <label for="createdInput" class="col-xl-2 col-form-label">Vytvorené</label>
             <div class="col-xl-10">
-                <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="created" id="createdInput" readonly value="@request.CREATED"></input>
+                <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date highlight-background" name="Created" id="createdInput" value="@(createdFormat)" readonly>
             </div>
+            <a id="createdMessage"></a>
         </div>
         @if(adminAccess || statusAccess)
         {
+            <div id="date" class="form-group row padding-light">
+                <label for="dateInput" class="col-xl-2 col-form-label">Plánované</label>
+                <div class="col-xl-10">
+                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput" value="@(scheduledFormat)">
+                </div>
+                <a id="dateMessage"></a>
+            </div>
             <div id="description" class="form-group row padding-light">
                 <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
                 <div class="col-xl-10">
@@ -60,16 +71,16 @@
                 </div>
                 <a id="descriptionMessage"></a>
             </div>
-            <div id="date" class="form-group row padding-light">
-                <label for="dateInput" class="col-xl-2 col-form-label">Plánované</label>
-                <div class="col-xl-10">
-                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput">
-                </div>
-                <a id="dateMessage"></a>
-            </div>
         }
         else
         {
+            <div id="scheduled" class="form-group row padding-light">
+                <label for="scheduledInput" class="col-xl-2 col-form-label">Plánované</label>
+                <div class="col-xl-10">
+                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date highlight-background" name="Scheduled" id="scheduledInput" value="@(scheduledFormat)" readonly>
+                </div>
+                <a id="dateMessage"></a>
+            </div>
             <div id="description" class="form-group row padding-light">
                 <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
                 <div class="col-xl-10">
@@ -77,45 +88,51 @@
                 </div>
                 <a id="descriptionMessage"></a>
             </div>
-            <div id="date" class="form-group row padding-light">
-                <label for="dateInput" class="col-xl-2 col-form-label">Plánované</label>
-                <div class="col-xl-10">
-                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date highlight-background" name="Date" id="dateInput" readonly>
-                </div>
-                <a id="dateMessage"></a>
-            </div>
         }
-
-
-
-        @*@if(adminAccess)
+        @if(adminAccess)
         {
-            <div class="form-group row padding-light">
+            <div id="status" class="form-group row padding-light">
                 <label for="statusInput" class="col-xl-2 col-form-label">Status</label>
                 <div class="col-xl-10">
                     <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Status" id="statusInput">
                         @for (int i = 0; i < statuses.Count; i++)
                         {
-                            if (request.STATUS == Translator.Access.FirstOrDefault(x => x.Value == types[i]).Key)
+                            if (request.STATUS.Equals(Translator.Status[i + 1]))
                             {
-                                <option selected="selected" value="@i">@types[i]</option>
+                                <option selected value="@i">@statuses[i]</option>
                             }
                             else
                             {
-                                <option value="@i">@types[i]</option>
+                                <option value="@i">@statuses[i]</option>
                             }
                         }
                     </select>
                 </div>
             </div>
+            <div id="result" class="form-group row padding-light">
+                <label for="resultInput" class="col-xl-2 col-form-label">Výsledok</label>
+                <div class="col-xl-10">
+                    <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight" name="result" id="resultInput" value="@request.RESULT">
+                </div>
+                <a id="resultMessage"></a>
+            </div>
         }
         else
         {
-            
-        }*@
-
-
-
+            <div id="status" class="form-group row padding-light">
+                <label for="statusInput" class="col-xl-2 col-form-label">Status</label>
+                <div class="col-xl-10">
+                    <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="status" id="statusInput" readonly value="@request.STATUS">
+                </div>
+            </div>
+            <div id="result" class="form-group row padding-light">
+                <label for="resultInput" class="col-xl-2 col-form-label">Výsledok</label>
+                <div class="col-xl-10">
+                    <input class="form-control light-border bright-border dark-background bright-color rounded-0 highlight highlight-background" name="result" id="resultInput" readonly value="@request.RESULT">
+                </div>
+                <a id="resultMessage"></a>
+            </div>
+        }
         <button type="submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">UPRAVIŤ</button>
     </form>
     @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
@@ -129,5 +146,3 @@
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
-
-<!--TODO validacny skript-->
