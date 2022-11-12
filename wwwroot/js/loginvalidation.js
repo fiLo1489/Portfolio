@@ -13,7 +13,7 @@
 	else {
 		if (mailValue.includes('insert ') || mailValue.includes('select ') || mailValue.includes('update ') || mailValue.includes('delete '))
 		{
-			mailMessage += 'zadaný mail obashuje nepovolené kľúčové slová, ';
+			mailMessage += 'zadaný mail obashuje nepovolené kľúčové slová (select alter update delete), ';
 		}
 
 		if (!mailValue.includes('@') || !mailValue.includes('.'))
@@ -33,8 +33,8 @@
 	}
 	else
 	{
-		if (passwordValue.includes('insert ') || passwordValue.includes('select ') || passwordValue.includes('update ') || mailValue.includes('delete ')) {
-			passwordMessage += 'zadané heslo obashuje nepovolené kľúčové slová, ';
+		if (injectionProtection(passwordValue)) {
+			passwordMessage += 'zadané heslo obashuje nepovolené kľúčové slová (select alter update delete), ';
 		}
 
 		if (!(passwordValue.includes('!') || passwordValue.includes('.') || passwordValue.includes('&') || passwordValue.includes('#') || passwordValue.includes('/')) ||
@@ -131,4 +131,16 @@ function hasLowerCase(value)
 function hasUpperCase(value)
 {
 	return (/[A-Z]/.test(value));
+}
+
+function injectionProtection(value)
+{
+	if (value.includes('insert') || value.includes('select') || value.includes('update') || value.includes('delete'))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

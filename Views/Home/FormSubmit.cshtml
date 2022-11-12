@@ -18,7 +18,7 @@
         In at sem nibh. In pulvinar mollis lacus, ac hendrerit diam convallis sit amet.
     </p>
     <form id="form" method="post" enctype="multipart/form-data" href="Home/FormSubmit">
-        <div class="form-group row padding-light">
+        <div id="category" class="form-group row padding-light">
             <label for="categoryInput" class="col-xl-2 col-form-label">Kategória</label>
             <div class="col-xl-10">
                 <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Category" id="categoryInput">
@@ -29,11 +29,12 @@
                 </select>
             </div>
         </div>
-        <div class="form-group row padding-light">
+        <div id="description" class="form-group row padding-light">
             <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
             <div class="col-xl-10">
                 <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" rows="5" name="Description" id="descriptionInput"></textarea>
             </div>
+            <a id="descriptionMessage"></a>
         </div>
         <div id="date" class="form-group row padding-light">
             <label for="dateInput" class="col-xl-2 col-form-label">Heslo</label>

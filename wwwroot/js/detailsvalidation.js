@@ -186,7 +186,7 @@ function hasUpperCase(value)
 
 function injectionProtection(value)
 {
-	if (value.includes('insert ') || value.includes('select ') || value.includes('update ') || value.includes('delete '))
+	if (value.includes('insert') || value.includes('select') || value.includes('update') || value.includes('delete'))
 	{
 		return true;
 	}

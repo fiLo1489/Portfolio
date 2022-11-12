@@ -1,40 +1,39 @@
 ﻿form.addEventListener('submit', e =>
 {
-	const noteValue = document.getElementById('noteInput').value.trim();
+	const descriptionValue = document.getElementById('descriptionInput').value.trim();
 	const dateValue = Date.parse(document.getElementById('dateInput').value);
 	const todayValue = Date.parse(new Date().toJSON().slice(0, 10).replace(/-/g, '-'));
 	const gap = 32400000000;
 
 	var dateMessage = '';
-	var noteMessage = '';
+	var descriptionMessage = '';
 
-	if (todayValue > dateValue)
+	if (!isNaN(dateValue))
 	{
-		dateMessage += 'dátum musí byť budúci';
-	}
-	else if ((todayValue + gap) < dateValue)
-	{
-		dateMessage += 'dátum musí byť v priebehu následujúceho roku';
-	}
-
-	if (noteValue !== '')
-	{
-		if (injectionProtection(noteValue))
+		if (todayValue > dateValue)
 		{
-			noteMessage += 'poznámka obsahuje nepovolené kľúčové slová';
+			dateMessage += 'dátum musí byť budúci';
 		}
 	}
 
-	unsetFor('note');
+	if (descriptionValue !== '')
+	{
+		if (injectionProtection(descriptionValue))
+		{
+			descriptionMessage += 'poznámka obsahuje nepovolené kľúčové slová (select alter update delete)';
+		}
+	}
+
+	unsetFor('description');
 	unsetFor('date');
 
-	if (noteMessage === '')
+	if (descriptionMessage === '')
 	{
-		setSuccessFor('note');
+		setSuccessFor('description');
 	}
 	else
 	{
-		setErrorFor('note', noteMessage);
+		setErrorFor('description', descriptionMessage);
 	}
 
 	if (dateMessage === '')
@@ -48,7 +47,7 @@
 
 	var submit;
 
-	if (noteMessage === '' && dateMessage === '') {
+	if (descriptionMessage === '' && dateMessage === '') {
 		submit = true;
 	}
 	else {
@@ -99,7 +98,7 @@ function unsetFor(element)
 
 function injectionProtection(value)
 {
-	if (value.includes('insert ') || value.includes('select ') || value.includes('update ') || value.includes('delete '))
+	if (value.includes('insert') || value.includes('select') || value.includes('update') || value.includes('delete'))
 	{
 		return true;
 	}

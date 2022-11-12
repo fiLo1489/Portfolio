@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SemestralnaPraca.Models;
 using System.Diagnostics;
 
@@ -7,9 +6,13 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO doplnenie tabulky a zalozky s navstevovanostou
+        // TODO uprava databazy pre poziadavky
+        // TODO doplnenie spravy poziadaviek
+        // TODO doplnenie správy fotiek
         // TODO AJAX
-        // TODO novy page pre poziadavky RequestManagement
+        // TODO doplnenie tabulky a zalozky s navstevovanostou
+        // TODO validacia HTML
+        // TODO skript na cistenie uloziska
 
         private readonly IHttpContextAccessor context;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
