@@ -2,7 +2,6 @@
 using SemestralnaPraca.Models;
 using System.Data;
 using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -10,7 +9,6 @@ namespace SemestralnaPraca.Controllers
     {
         // TODO odoslanie upravenej ziadosti
         // TODO validacny skript pre úpravu formularu
-        // TODO poistka pre reload do cache
         // TODO uprava fotky v o mne v mobilnom rozhrani
         // TODO doplnenie spravy fotiek
         // TODO AJAX
