@@ -32,7 +32,7 @@
     <h1 class="heavy-text mb-3">
         ŽIADOSŤ
     </h1>
-    <form id="form" method="post" enctype="multipart/form-data" href="Home/FormEdit">
+    <form id="form" method="post" enctype="multipart/form-data" href="Home/RequestEdit">
         <div id="id" class="form-group row padding-light">
             <label for="idInput" class="col-xl-2 col-form-label">Číslo žiadosti</label>
             <div class="col-xl-10">
@@ -63,12 +63,12 @@
         </div>
         @if(adminAccess || statusAccess)
         {
-            <div id="date" class="form-group row padding-light">
-                <label for="dateInput" class="col-xl-2 col-form-label">Plánované</label>
+            <div id="scheduled" class="form-group row padding-light">
+                <label for="scheduledInput" class="col-xl-2 col-form-label">Plánované</label>
                 <div class="col-xl-10">
-                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput" value="@(scheduledFormat)">
+                    <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Scheduled" id="scheduledInput" value="@(scheduledFormat)">
                 </div>
-                <a id="dateMessage"></a>
+                <a id="scheduledMessage"></a>
             </div>
             <div id="description" class="form-group row padding-light">
                 <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
@@ -85,7 +85,7 @@
                 <div class="col-xl-10">
                     <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date highlight-background" name="Scheduled" id="scheduledInput" value="@(scheduledFormat)" readonly>
                 </div>
-                <a id="dateMessage"></a>
+                <a id="scheduledMessage"></a>
             </div>
             <div id="description" class="form-group row padding-light">
                 <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>

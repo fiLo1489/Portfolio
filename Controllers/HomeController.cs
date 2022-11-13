@@ -7,8 +7,7 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO odoslanie upravenej ziadosti
-        // TODO validacny skript pre úpravu formularu
+        // TODO validacny skript pre upravu formularu
         // TODO uprava fotky v o mne v mobilnom rozhrani
         // TODO doplnenie spravy fotiek
         // TODO AJAX
@@ -84,7 +83,7 @@ namespace SemestralnaPraca.Controllers
         }
 
         [HttpPost]
-        public IActionResult FormSubmit(int id, string scheduled, string description, int status, string result)
+        public IActionResult RequestEdit(int id, string scheduled, string description, int status, string result)
         {
             //string user = context.HttpContext.Session.GetString(Variables.Mail);
 
@@ -118,6 +117,8 @@ namespace SemestralnaPraca.Controllers
             //{
             //    return RedirectToAction("Index", "Home");
             //}
+
+            // TODO odoslanie ziadosti
 
             return View();
         }
