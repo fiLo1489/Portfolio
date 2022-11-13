@@ -8,7 +8,7 @@
 	var dateMessage = '';
 	var descriptionMessage = '';
 
-	if (!isNaN(dateValue))
+	if (isNaN(dateValue))
 	{
 		dateMessage += 'nebol zadaný dátum';
 	}

@@ -40,6 +40,9 @@
                             }
                             else
                             {
+                                <li class="nav-item">
+                                    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="RequestManagement">SPRÁVA ŽIADOSTÍ</a>
+                                </li>
                                 @if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
                                 {
                                     <li class="nav-item">
@@ -49,18 +52,15 @@
                                         <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="PhotoManagement">SPRÁVA FOTOGRAFIÍ</a>
                                     </li>
                                 }
-                                @if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 1)
+                                else
                                 {
+                                    <li class="nav-item">
+                                    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="AccountDetails">ÚDAJE</a>
+                                    </li>
                                     <li class="nav-item">
                                         <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="FormSubmit">ODOSLANIE ŽIADOSTI</a>
                                     </li>
                                 }
-                                <li class="nav-item">
-                                    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="RequestManagement">SPRÁVA ŽIADOSTÍ</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="AccountDetails">ÚDAJE</a>
-                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Logout">ODHLÁSENIE</a>
                                 </li>

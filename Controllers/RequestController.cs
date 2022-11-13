@@ -131,27 +131,42 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public static bool DeleteRequest(string id)
+        public static bool? DeleteRequest(string id, bool admin)
         {
             try
             {
-                string query = ("delete from REQUESTS where ID = '" + id + "'");
+                bool state = false;
+                
+                string deleteQuery = ("delete from REQUESTS where ID = '" + id + "'");
+                string stateQuery = ("select count(*) from REQUESTS where ID = '" + id + "' and STATUS = '1'");
                 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {
                     connection.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    using (SqlCommand cmd = new SqlCommand(stateQuery, connection))
                     {
-                        cmd.ExecuteNonQuery();
+                        state = (Convert.ToInt32(cmd.ExecuteScalar()) != 0 ? true : false);
+                    }
+
+                    if (admin || state)
+                    {
+                        using (SqlCommand cmd = new SqlCommand(deleteQuery, connection))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
                     }
                 }
-
-                return true;
             }
             catch
             {
-                return false;
+                return null;
             }
         }
     }

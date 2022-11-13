@@ -4,17 +4,20 @@
 @{
     ViewData["Title"] = "Údaje";
 
-    UserModel user;
-    if (string.IsNullOrEmpty(ViewBag.User))
+    List<string> types = Translator.Access.Values.ToList();
+    string value;
+
+    if (ViewBag.Id == null)
     {
-        user = UserController.GetUser(context.HttpContext.Session.GetString(Variables.Mail));
+        value = context.HttpContext.Session.GetString(Variables.User);
     }
     else
     {
-        user = UserController.GetUser(ViewBag.User);
+        value = ViewBag.Id;
+        context.HttpContext.Session.SetString(Variables.User, value);
     }
 
-    List<string> types = Translator.Access.Values.ToList();
+    UserModel user = UserController.GetUser(value);
 }
 
 <component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />

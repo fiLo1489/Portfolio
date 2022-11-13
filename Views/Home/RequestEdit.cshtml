@@ -5,8 +5,19 @@
     ViewData["Title"] = "Žiadosť";
 
     List<string> statuses = Translator.Status.Values.ToList();
+    string value;
 
-    RequestModel request = RequestController.GetRequest(ViewBag.Id);
+    if (ViewBag.Id == null)
+    {
+        value = context.HttpContext.Session.GetString(Variables.Request);
+    }
+    else
+    {
+        value = ViewBag.Id;
+        context.HttpContext.Session.SetString(Variables.Request, value);
+    }
+
+    RequestModel request = RequestController.GetRequest(value);
 
     bool adminAccess = (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false;
     bool statusAccess = (request.STATUS.Equals(Translator.Status[1])) ? true : false;

@@ -6,13 +6,13 @@ namespace SemestralnaPraca.Controllers
 {
     public static class UserController
     {
-        public static List<UserModel> GetUsers(string current, int role)
+        public static List<UserModel> GetUsers(int role)
         {
             try
             {
                 List<UserModel> users = new List<UserModel>();
 
-                string query = ("select * from CREDENTIALS where MAIL != '" + current + "' and ROLE <= '" + role + "'");
+                string query = ("select * from CREDENTIALS where ROLE <= '" + role + "'");
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {

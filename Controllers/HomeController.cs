@@ -8,7 +8,7 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO nemozno odstranit ak je potvrdene
+        // TODO odoslanie upravenej ziadosti
         // TODO validacny skript pre úpravu formularu
         // TODO poistka pre reload do cache
         // TODO uprava fotky v o mne v mobilnom rozhrani
@@ -83,6 +83,45 @@ namespace SemestralnaPraca.Controllers
             { 
                 return RedirectToAction("Index", "Home");
             }
+        }
+
+        [HttpPost]
+        public IActionResult FormSubmit(int id, string scheduled, string description, int status, string result)
+        {
+            //string user = context.HttpContext.Session.GetString(Variables.Mail);
+
+            //if (!string.IsNullOrEmpty(user))
+            //{
+            //    RequestModel request = new RequestModel();
+
+            //    request.CATEGORY = Translator.Categories.ElementAt(category).Key;
+            //    request.DESCRIPTION = description;
+            //    request.SCHEDULED = date;
+            //    request.USER = user;
+
+            //    bool? result = RequestController.InsertRequest(request) == true;
+
+            //    if (result == true)
+            //    {
+            //        ViewBag.SuccessReply = ("požiadavka bola úspešne zaregistrovaná");
+            //    }
+            //    else if (result == false)
+            //    {
+            //        ViewBag.ErrorReply = ("požiadavka v daný deň už existuje");
+            //    }
+            //    else
+            //    {
+            //        ViewBag.ErrorReply = ("nepodarilo sa vytvoriť požiadavku");
+            //    }
+
+            //    return View();
+            //}
+            //else
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
+
+            return View();
         }
 
         public IActionResult Register()
@@ -297,11 +336,18 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult DeleteRequest(string id)
         {
-            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
-                if (RequestController.DeleteRequest(id))
+                bool admin = (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false;
+                bool? result = RequestController.DeleteRequest(id, admin);
+
+                if (result == true)
                 {
-                    TempData["SuccessReply"] = ("požiadavka číslo" + id + " bola odstránená");
+                    TempData["SuccessReply"] = ("požiadavka číslo " + id + " bola odstránená");
+                }
+                else if (result == false)
+                {
+                    TempData["ErrorReply"] = ("požiadavku číslo " + id + " nemožno odstrániť pretože už nie je čakajúca");
                 }
                 else
                 {
