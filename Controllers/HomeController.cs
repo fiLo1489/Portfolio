@@ -7,7 +7,6 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO uprava fotky v o mne v mobilnom rozhrani
         // TODO doplnenie spravy fotiek
         // TODO AJAX
         // TODO doplnenie tabulky a zalozky s navstevovanostou
@@ -229,13 +228,24 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult AccountDetails() 
         {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            string user = context.HttpContext.Session.GetString(Variables.Mail);
+            var request = TempData["User"];
+            
+            if (string.IsNullOrEmpty(user))
             {
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                ViewBag.User = TempData["User"];
+                if (request == null)
+                {
+                    ViewBag.User = user;
+                }
+                else
+                {
+                    ViewBag.User = request;
+                }
+
                 return View();
             }
         }
