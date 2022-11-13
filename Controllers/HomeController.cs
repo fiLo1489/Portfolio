@@ -7,7 +7,7 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO doplnenie spravy fotiek
+        // TODO doplnenie pridavania fotografii
         // TODO skript na cistenie uloziska
         // TODO AJAX
         // TODO doplnenie modulu pre statistiku
@@ -324,6 +324,27 @@ namespace SemestralnaPraca.Controllers
                 }
 
                 return RedirectToAction("UserManagement", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult DeletePhoto(int id)
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                if (PhotoController.DeletePhoto(id))
+                {
+                    TempData["SuccessReply"] = ("fotografia bola úspešne odstránená");
+                }
+                else
+                {
+                    TempData["ErrorReply"] = ("fotografiu sa nepodarilo odstrániť");
+                }
+
+                return RedirectToAction("PhotoManagement", "Home");
             }
             else
             {

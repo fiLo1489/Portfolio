@@ -132,6 +132,29 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
+        public static bool DeletePhoto(int id)
+        {
+            try
+            {
+                string query = ("delete from PHOTOS where ID = '" + id + "'");
+
+                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch 
+            { 
+                return false; 
+            }
+        }
+
         public static List<string> GetCategories()
         {
             return Translator.Categories.Values.ToList();

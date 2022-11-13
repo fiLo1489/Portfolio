@@ -4,7 +4,13 @@
 @{
     ViewData["Title"] = "Správa fotografií";
 
-    List<PhotoModel> photos = PhotoController.GetPhotos();
+    List<List<PhotoModel>> photos = new List<List<PhotoModel>>();
+
+    for (int i = 0; i < Translator.Categories.Count; i++)
+    {
+        List<PhotoModel> gallery = PhotoController.GetGallery(Translator.Categories.ElementAt(i).Key);
+        photos.Add(gallery);
+    }
 
     if (photos == null || photos.Count == 0)
     {
@@ -16,23 +22,33 @@
 
 <div class="dark-background padding-heavy text-center light-text bright-color">
     <h1 class="heavy-text mb-3">
-        FOTOGRAFIE
+        SPRÁVA FOTOGRAFIÍ
     </h1>
     @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
     {
-    <p class="success-color light-text">@ViewBag.SuccessReply</p>
+        <p class="success-color light-text">@ViewBag.SuccessReply</p>
     }
     @if (!string.IsNullOrEmpty(ViewBag.ErrorReply))
     {
         <p class="error-color light-text">@ViewBag.ErrorReply</p>
     }
-    <!--TODO pridanie novej-->
-    <div class="row">
-        @foreach (PhotoModel item in photos)
-        {
-            <component type="typeof(Photo)" param-File="@(item.TITLE)" param-Id="@(item.ID)" param-Category="@(item.CATEGORY)" param-Orientation="@(item.ORIENTATION)" render-mode="ServerPrerendered" />
-        }
-    </div>
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
+
+@for (int i = 0; i < Translator.Categories.Count; i ++)
+{
+    <div class="dark-background padding-heavy text-center light-text bright-color">
+        <h1 class="heavy-text mb-3">
+            @Translator.Categories.ElementAt(i).Value.ToUpper()
+        </h1>
+        <div class="row">
+            @foreach (PhotoModel item in photos[i])
+            {
+                <component type="typeof(Photo)" param-File="@(item.TITLE)" param-Id="@(item.ID)" param-Category="@(item.CATEGORY)" param-Orientation="@(item.ORIENTATION)" render-mode="ServerPrerendered" />
+            }
+        </div>
+    </div>
+
+    <component type="typeof(Splitter)" param-File="@((i + 3) + ".jpg")" render-mode="ServerPrerendered" />
+}

@@ -3,7 +3,7 @@
         <div class="margin-light">
             <img src="/image/gallery/@(Category)/@(Orientation)/@(File)" alt="@Category">
             <div class="mt-2">
-                <a class="bright-color light-text" href="/Home/DeleteUser?id=@Id">
+                <a class="bright-color light-text" href="/Home/DeletePhoto?id=@Id">
                     <i class="bi bi-trash3"></i>
                 </a>
             </div>
@@ -11,7 +11,8 @@
     </div>
 </div>
 
-@code {
+@code 
+{
     [Parameter]
     public string File { get; set; }
 
