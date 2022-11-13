@@ -169,5 +169,43 @@ namespace SemestralnaPraca.Controllers
                 return null;
             }
         }
+
+        public static bool? UpdateRequest(RequestModel request)
+        {
+            try
+            {
+                bool available = true;
+
+                string availableQuery = ("select count(*) from REQUESTS where SCHEDULED = '" + request.SCHEDULED + "' and ID != '" + request.ID + "'");
+                string updateQuery = ("update REQUESTS set SCHEDULED = '" + request.SCHEDULED + "', DESCRIPTION = " + 
+                    (string.IsNullOrEmpty(request.DESCRIPTION) ? "NULL" : ("'" + request.DESCRIPTION + "'")) + ", STATUS = '" + 
+                    Translator.Status.FirstOrDefault(x => x.Value == request.STATUS).Key + "', RESULT = " + 
+                    (string.IsNullOrEmpty(request.RESULT) ? "NULL" : ("'" + request.RESULT + "'")) + " where ID = '" + request.ID + "'");
+
+                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                {
+                    connection.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(availableQuery, connection))
+                    {
+                        available = (Convert.ToInt32(cmd.ExecuteScalar()) == 0 ? true : false);
+                    }
+
+                    if (available)
+                    {
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, connection))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+                return available;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

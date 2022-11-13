@@ -139,7 +139,14 @@
                 <a id="resultMessage"></a>
             </div>
         }
-        <button type="submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">UPRAVIŤ</button>
+        @if(adminAccess || statusAccess)
+        {
+            <button type="submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">UPRAVIŤ</button>
+        }
+        else
+        {
+            <button type="submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 highlight-background" disabled>UPRAVIŤ</button>
+        }
     </form>
     @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
     {
@@ -152,3 +159,5 @@
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
+
+<script src="~/js/formvalidation.js"></script>

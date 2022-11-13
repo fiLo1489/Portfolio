@@ -7,7 +7,6 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO validacny skript pre upravu formularu
         // TODO uprava fotky v o mne v mobilnom rozhrani
         // TODO doplnenie spravy fotiek
         // TODO AJAX
@@ -59,13 +58,13 @@ namespace SemestralnaPraca.Controllers
                 request.SCHEDULED = date;
                 request.USER = user;
 
-                bool? result = RequestController.InsertRequest(request) == true;
+                bool? output = RequestController.InsertRequest(request) == true;
 
-                if (result == true)
+                if (output == true)
                 {
                     ViewBag.SuccessReply = ("požiadavka bola úspešne zaregistrovaná");
                 }
-                else if (result == false)
+                else if (output == false)
                 {
                     ViewBag.ErrorReply = ("požiadavka v daný deň už existuje");
                 }
@@ -85,40 +84,28 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult RequestEdit(int id, string scheduled, string description, int status, string result)
         {
-            //string user = context.HttpContext.Session.GetString(Variables.Mail);
+            RequestModel request = new RequestModel();
 
-            //if (!string.IsNullOrEmpty(user))
-            //{
-            //    RequestModel request = new RequestModel();
+            request.ID = id;
+            request.SCHEDULED = scheduled;
+            request.DESCRIPTION = description;
+            request.STATUS = Translator.Status.ElementAt(status).Value;
+            request.RESULT = result;
 
-            //    request.CATEGORY = Translator.Categories.ElementAt(category).Key;
-            //    request.DESCRIPTION = description;
-            //    request.SCHEDULED = date;
-            //    request.USER = user;
+            bool? output = RequestController.UpdateRequest(request);
 
-            //    bool? result = RequestController.InsertRequest(request) == true;
-
-            //    if (result == true)
-            //    {
-            //        ViewBag.SuccessReply = ("požiadavka bola úspešne zaregistrovaná");
-            //    }
-            //    else if (result == false)
-            //    {
-            //        ViewBag.ErrorReply = ("požiadavka v daný deň už existuje");
-            //    }
-            //    else
-            //    {
-            //        ViewBag.ErrorReply = ("nepodarilo sa vytvoriť požiadavku");
-            //    }
-
-            //    return View();
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
-
-            // TODO odoslanie ziadosti
+            if (output == true)
+            {
+                ViewBag.SuccessReply = ("požiadavka bola úspešne aktualizovaná");
+            }
+            else if (output == false)
+            {
+                ViewBag.ErrorReply = ("nie je možné aktualizovať požiadavku na zvolený deň");
+            }
+            else
+            {
+                ViewBag.ErrorReply = ("nepodarilo sa aktualizovať požiadavku");
+            }
 
             return View();
         }
@@ -153,14 +140,14 @@ namespace SemestralnaPraca.Controllers
             user.PASSWORD = password;
             user.ROLE= role;
 
-            bool? result = UserController.InsertUser(user);
+            bool? output = UserController.InsertUser(user);
 
-            if (result == true)
+            if (output == true)
             {
                 LoginAction(mail, Translator.Access[role]);
                 return RedirectToAction("Index", "Home");
             }
-            else if (result == false)
+            else if (output == false)
             {
                 ViewBag.Reply += "účet so zadaným mailom už existuje";
                 return View();
@@ -228,15 +215,15 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult RequestManagement()
         {
-            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
             {
                 ViewBag.SuccessReply = TempData["SuccessReply"];
                 ViewBag.ErrorReply = TempData["ErrorReply"];
                 return View();
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -338,13 +325,13 @@ namespace SemestralnaPraca.Controllers
             if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
             {
                 bool admin = (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false;
-                bool? result = RequestController.DeleteRequest(id, admin);
+                bool? output = RequestController.DeleteRequest(id, admin);
 
-                if (result == true)
+                if (output == true)
                 {
                     TempData["SuccessReply"] = ("požiadavka číslo " + id + " bola odstránená");
                 }
-                else if (result == false)
+                else if (output == false)
                 {
                     TempData["ErrorReply"] = ("požiadavku číslo " + id + " nemožno odstrániť pretože už nie je čakajúca");
                 }
@@ -363,10 +350,15 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult RequestEdit()
         {
-            ViewBag.Id = TempData["Id"];
-            return View();
-
-            // TODO pristup
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewBag.Id = TempData["Id"];
+                return View();
+            }
         }
 
         public IActionResult Logout()

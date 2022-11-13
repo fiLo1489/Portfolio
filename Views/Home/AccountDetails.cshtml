@@ -7,13 +7,13 @@
     List<string> types = Translator.Access.Values.ToList();
     string value;
 
-    if (ViewBag.Id == null)
+    if (ViewBag.User == null)
     {
         value = context.HttpContext.Session.GetString(Variables.User);
     }
     else
     {
-        value = ViewBag.Id;
+        value = ViewBag.User;
         context.HttpContext.Session.SetString(Variables.User, value);
     }
 
