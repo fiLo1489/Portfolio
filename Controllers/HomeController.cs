@@ -8,10 +8,10 @@ namespace SemestralnaPraca.Controllers
     public class HomeController : Controller
     {
         // TODO doplnenie spravy fotiek
-        // TODO AJAX
-        // TODO doplnenie tabulky a zalozky s navstevovanostou
-        // TODO validacia HTML
         // TODO skript na cistenie uloziska
+        // TODO AJAX
+        // TODO doplnenie modulu pre statistiku
+        // TODO validacia HTML
 
         private readonly IHttpContextAccessor context;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
@@ -380,26 +380,31 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult Wedding()
         {
+            StatisticsController.Visit("wedding");
             return View("~/Views/Gallery/Wedding.cshtml");
         }
 
         public IActionResult Event()
         {
+            StatisticsController.Visit("event");
             return View("~/Views/Gallery/Event.cshtml");
         }
 
         public IActionResult Car()
         {
+            StatisticsController.Visit("car");
             return View("~/Views/Gallery/Car.cshtml");
         }
 
         public IActionResult Nature()
         {
+            StatisticsController.Visit("nature");
             return View("~/Views/Gallery/Nature.cshtml");
         }
 
         public IActionResult Other()
         {
+            StatisticsController.Visit("other");
             return View("~/Views/Gallery/Other.cshtml");
         }
 
