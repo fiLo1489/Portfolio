@@ -25,11 +25,11 @@
 
         public static Dictionary<string, string> Categories = new Dictionary<string, string>()
         {
-            { "wedding", "svadby" },
-            { "event", "podujatia" },
             { "car", "vozidlá" },
+            { "event", "podujatia" },
             { "nature", "príroda" },
-            { "other", "iné" }
+            { "other", "iné" },
+            { "wedding", "svadby" }
         };
     }
 }

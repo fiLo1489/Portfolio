@@ -212,6 +212,20 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
+        public IActionResult PhotoManagement()
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                ViewBag.SuccessReply = TempData["SuccessReply"];
+                ViewBag.ErrorReply = TempData["ErrorReply"];
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
         public IActionResult RequestManagement()
         {
             if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))

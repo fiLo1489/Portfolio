@@ -1,0 +1,38 @@
+﻿@using SemestralnaPraca.Controllers
+@inject IHttpContextAccessor context;
+
+@{
+    ViewData["Title"] = "Správa fotografií";
+
+    List<PhotoModel> photos = PhotoController.GetPhotos();
+
+    if (photos == null || photos.Count == 0)
+    {
+        ViewBag.Reply = "neexistujú fotografie";
+    }
+}
+
+<component type="typeof(Splitter)" param-File="@("1.jpg")" render-mode="ServerPrerendered" />
+
+<div class="dark-background padding-heavy text-center light-text bright-color">
+    <h1 class="heavy-text mb-3">
+        FOTOGRAFIE
+    </h1>
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
+    {
+    <p class="success-color light-text">@ViewBag.SuccessReply</p>
+    }
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorReply))
+    {
+        <p class="error-color light-text">@ViewBag.ErrorReply</p>
+    }
+    <!--TODO pridanie novej-->
+    <div class="row">
+        @foreach (PhotoModel item in photos)
+        {
+            <component type="typeof(Photo)" param-File="@(item.TITLE)" param-Id="@(item.ID)" param-Category="@(item.CATEGORY)" param-Orientation="@(item.ORIENTATION)" render-mode="ServerPrerendered" />
+        }
+    </div>
+</div>
+
+<component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />

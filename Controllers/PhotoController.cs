@@ -25,6 +25,7 @@ namespace SemestralnaPraca.Controllers
                             {
                                 PhotoModel photo = new PhotoModel();
 
+                                photo.ID = int.Parse(reader[0].ToString());
                                 photo.TITLE = reader[1].ToString();
                                 photo.CATEGORY = reader[2].ToString();
                                 photo.ORIENTATION = Translator.Orientation[reader[3].ToString()];
@@ -83,6 +84,44 @@ namespace SemestralnaPraca.Controllers
                 if (horizontalCounter != horizontalPhotos.Count)
                 {
                     photos.Add(horizontalPhotos[horizontalPhotos.Count - 1]);
+                }
+
+                return photos;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static List<PhotoModel> GetPhotos()
+        {
+            try
+            {
+                List<PhotoModel> photos = new List<PhotoModel>();
+
+                string query = ("select * from PHOTOS order by CATEGORY");
+
+                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                PhotoModel photo = new PhotoModel();
+
+                                photo.ID = int.Parse(reader[0].ToString());
+                                photo.TITLE = reader[1].ToString();
+                                photo.CATEGORY = reader[2].ToString();
+                                photo.ORIENTATION = Translator.Orientation[reader[3].ToString()];
+
+                                photos.Add(photo);
+                            }
+                        }
+                    }
                 }
 
                 return photos;
