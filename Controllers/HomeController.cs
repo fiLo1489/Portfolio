@@ -2,7 +2,7 @@
 using SemestralnaPraca.Models;
 using System.Data;
 using System.Diagnostics;
-using System.IO.FileSystemInfo;
+using System.Drawing;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -15,11 +15,13 @@ namespace SemestralnaPraca.Controllers
         // TODO validacia HTML
 
         private readonly IHttpContextAccessor context;
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment enviroment;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
 
-        public HomeController(IHttpContextAccessor httpContextAccessor)
+        public HomeController(IHttpContextAccessor httpContextAccessor, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment)
         {
             context = httpContextAccessor;
+            enviroment = hostingEnvironment;
         }
 
         public IActionResult Index()
@@ -113,6 +115,19 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult PhotoManagement(int category, IFormFile file)
         {
+            // TODO
+            
+            var directory = enviroment.ContentRootPath;
+
+            using (var fileStream = new FileStream(file.FileName, FileMode.Create, FileAccess.Write))
+            {
+                var image = Image.FromFile(file.FileName);
+
+                string heighth = image.Height.ToString();
+                string width = image.Width.ToString();
+                
+                file.CopyTo(fileStream);
+            }
             return View();
         }
 
