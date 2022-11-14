@@ -2,6 +2,7 @@
 using SemestralnaPraca.Models;
 using System.Data;
 using System.Diagnostics;
+using System.IO.FileSystemInfo;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -106,6 +107,12 @@ namespace SemestralnaPraca.Controllers
                 ViewBag.ErrorReply = ("nepodarilo sa aktualizovať požiadavku");
             }
 
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult PhotoManagement(int category, IFormFile file)
+        {
             return View();
         }
 

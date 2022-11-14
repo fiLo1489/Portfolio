@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Správa fotografií";
 
+    List<string> categories = Translator.Categories.Values.ToList();
     List<List<PhotoModel>> photos = new List<List<PhotoModel>>();
 
     for (int i = 0; i < Translator.Categories.Count; i++)
@@ -24,6 +25,27 @@
     <h1 class="heavy-text mb-3">
         SPRÁVA FOTOGRAFIÍ
     </h1>
+    <form id="form" method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="PhotoManagement">
+        <div id="category" class="form-group row padding-light">
+            <label for="categoryInput" class="col-xl-2 col-form-label">Kategória</label>
+            <div class="col-xl-10">
+                <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Category" id="categoryInput">
+                    @for (int i = 0; i < categories.Count; i++)
+                    {
+                        <option value="@i">@categories[i]</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div id="file" class="form-group row padding-light">
+            <label for="fileInput" class="col-xl-2 col-form-label">Súbor</label>
+            <div class="col-xl-10">
+                <input type="file" class="form-control light-border bright-border dark-background bright-color rounded-0" name="File" id="fileInput" runat="server">
+            </div>
+            <a id="fileMessage"></a>
+        </div>
+        <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">NAHRAŤ</button>
+    </form>
     @if (!string.IsNullOrEmpty(ViewBag.SuccessReply))
     {
         <p class="success-color light-text">@ViewBag.SuccessReply</p>
