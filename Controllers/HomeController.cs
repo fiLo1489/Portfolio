@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using SemestralnaPraca.Models;
 using System.Data;
 using System.Diagnostics;
@@ -11,6 +10,8 @@ namespace SemestralnaPraca.Controllers
     public class HomeController : Controller
     {
         // TODO validacia vkladaneho suboru
+        // TODO pretriedit export funkcie
+        // TODO kontrola na strane servera
         // TODO AJAX
         // TODO doplnenie modulu pre statistiku
         // TODO validacia HTML

@@ -1,4 +1,6 @@
-﻿form.addEventListener('submit', e =>
+﻿import * as base from './basevalidation.js';
+
+form.addEventListener('submit', e =>
 {
 	const mailValue = document.getElementById('mailInput').value.trim();
 	const nameValue = document.getElementById('nameInput').value.trim();
@@ -20,19 +22,14 @@
 	}
 	else
 	{
-		if (injectionProtection(mailValue))
+		if (base.injectionProtection(mailValue))
 		{
 			mailMessage += 'zadaný mail obashuje nepovolené kľúčové slová (select alter update delete), ';
 		}
 
-		if (!mailValue.includes('@') || !mailValue.includes('.'))
+		if (!base.isMailValid(mailValue))
 		{
 			mailMessage += 'zadaný mail má nesprávny tvar, ';
-		}
-
-		if (mailValue.length > 255)
-		{
-			mailMessage += 'zadaný mail je príliš dlhý, ';
 		}
 	}
 
@@ -52,9 +49,7 @@
 	}
 	else
 	{
-		if (!phoneValue.startsWith("+") ||
-			phoneValue.length < 11 || phoneValue.length > 14 ||
-			!areNumbers(phoneValue.substring(1, phoneValue.length)))
+		if (!base.isPhoneValid(phoneValue))
 		{
 			phoneMessage += 'telefónne číslo má nesprávny tvar (+xxxxxxxxxxxx)';
 		}
@@ -66,15 +61,12 @@
 	}
 	else
 	{
-		if (injectionProtection(passwordValue))
+		if (base.injectionProtection(passwordValue))
 		{
 			passwordMessage += 'zadané heslo obashuje nepovolené kľúčové slová (select alter update delete), ';
 		}
 
-		if (!(passwordValue.includes('!') || passwordValue.includes('.') || passwordValue.includes('&') || passwordValue.includes('#') || passwordValue.includes('/')) ||
-			!(containsNumbers(passwordValue) &&
-				hasLowerCase(passwordValue) &&
-				hasUpperCase(passwordValue)))
+		if (!base.isPasswordValid(passwordValue))
 		{
 			passwordMessage += 'heslo musí obsahovať veľký a malý znak, číslo a bezpečnostný znak (! . & # /), ';
 		}
@@ -92,65 +84,65 @@
 		}
 	}
 
-	unsetFor('mail');
-	unsetFor('name');
-	unsetFor('surname');
-	unsetFor('phone');
-	unsetFor('password');
-	unsetFor('passwordConfirmation');
+	base.unsetFor('mail');
+	base.unsetFor('name');
+	base.unsetFor('surname');
+	base.unsetFor('phone');
+	base.unsetFor('password');
+	base.unsetFor('passwordConfirmation');
 
 	if (mailMessage === '')
 	{
-		setSuccessFor('mail');
+		base.setSuccessFor('mail');
 	}
 	else
 	{
-		setErrorFor('mail', mailMessage.substring(0, mailMessage.length - 2));
+		base.setErrorFor('mail', mailMessage.substring(0, mailMessage.length - 2));
 	}
 
 	if (nameMessage === '')
 	{
-		setSuccessFor('name');
+		base.setSuccessFor('name');
 	}
 	else
 	{
-		setErrorFor('name', nameMessage);
+		base.setErrorFor('name', nameMessage);
 	}
 
 	if (surnameMessage === '')
 	{
-		setSuccessFor('surname');
+		base.setSuccessFor('surname');
 	}
 	else
 	{
-		setErrorFor('surname', surnameMessage);
+		base.setErrorFor('surname', surnameMessage);
 	}
 
 	if (phoneMessage === '')
 	{
-		setSuccessFor('phone');
+		base.setSuccessFor('phone');
 	}
 	else
 	{
-		setErrorFor('phone', phoneMessage);
+		base.setErrorFor('phone', phoneMessage);
 	}
 
 	if (passwordMessage === '')
 	{
-		setSuccessFor('password');
+		base.setSuccessFor('password');
 	}
 	else
 	{
-		setErrorFor('password', passwordMessage.substring(0, passwordMessage.length - 2));
+		base.setErrorFor('password', passwordMessage.substring(0, passwordMessage.length - 2));
 	}
 
 	if (passwordConfirmationMessage === '')
 	{
-		setSuccessFor('passwordConfirmation');
+		base.setSuccessFor('passwordConfirmation');
 	}
 	else
 	{
-		setErrorFor('passwordConfirmation', passwordConfirmationMessage);
+		base.setErrorFor('passwordConfirmation', passwordConfirmationMessage);
 	}
 
 	var submit;
@@ -167,71 +159,3 @@
 		e.preventDefault();
 	}
 });
-
-function setErrorFor(element, message)
-{
-	const parent = document.getElementById(element);
-	const children = document.getElementById(element + 'Message');
-
-	parent.classList.add('error');
-	children.textContent = message;
-	children.style.visibility = 'visible';
-}
-
-function setSuccessFor(element)
-{
-	const parent = document.getElementById(element);
-
-	parent.classList.add('success');
-}
-
-function unsetFor(element)
-{
-	const parent = document.getElementById(element);
-	const children = document.getElementById(element + 'Message');
-
-	if (parent.classList.contains('error'))
-	{
-		parent.classList.remove('error');
-		children.textContent = '';
-		children.style.visibility = 'hidden';
-	}
-
-	if (parent.classList.contains('success'))
-	{
-		parent.classList.remove('success');
-		children.textContent = '';
-		children.style.visibility = 'hidden';
-	}
-}
-
-function areNumbers(value)
-{
-	return (/\d/.test(value));
-}
-
-function containsNumbers(value)
-{
-	return (/\d/.test(value));
-}
-
-function hasLowerCase(value)
-{
-	return (/[a-z]/.test(value));
-}
-function hasUpperCase(value)
-{
-	return (/[A-Z]/.test(value));
-}
-
-function injectionProtection(value)
-{
-	if (value.includes('insert') || value.includes('select') || value.includes('update') || value.includes('delete'))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
