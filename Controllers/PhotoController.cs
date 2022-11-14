@@ -28,15 +28,15 @@ namespace SemestralnaPraca.Controllers
                                 photo.ID = int.Parse(reader[0].ToString());
                                 photo.TITLE = reader[1].ToString();
                                 photo.CATEGORY = reader[2].ToString();
-                                photo.ORIENTATION = Translator.Orientation[reader[3].ToString()];
+                                photo.ORIENTATION = Convert.ToBoolean(Convert.ToInt16(reader[3].ToString()));
 
-                                if (photo.ORIENTATION.Equals("horizontal"))
+                                if (photo.ORIENTATION)
                                 {
-                                    horizontalPhotos.Add(photo);
+                                    verticalPhotos.Add(photo);
                                 }
                                 else
                                 {
-                                    verticalPhotos.Add(photo);
+                                    horizontalPhotos.Add(photo);
                                 }
                             }
                         }
@@ -116,7 +116,7 @@ namespace SemestralnaPraca.Controllers
                                 photo.ID = int.Parse(reader[0].ToString());
                                 photo.TITLE = reader[1].ToString();
                                 photo.CATEGORY = reader[2].ToString();
-                                photo.ORIENTATION = Translator.Orientation[reader[3].ToString()];
+                                photo.ORIENTATION = Convert.ToBoolean(Convert.ToInt16(reader[3].ToString()));
 
                                 photos.Add(photo);
                             }

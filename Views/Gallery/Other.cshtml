@@ -14,7 +14,7 @@
     <div class="row">
         @foreach (PhotoModel item in photos)
         {
-            <component type="typeof(Gallery)" param-File="@(item.TITLE)" param-Category="@(item.CATEGORY)" param-Orientation="@(item.ORIENTATION)" render-mode="ServerPrerendered" />
+            <component type="typeof(Gallery)" param-File="@(item.TITLE)" param-Category="@(item.CATEGORY)" render-mode="ServerPrerendered" />
         }
     </div>
 </div>
