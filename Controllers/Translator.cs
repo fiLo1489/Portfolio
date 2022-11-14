@@ -2,12 +2,6 @@
 {
     public static class Translator
     {
-        //public static Dictionary<string, string> Orientation = new Dictionary<string, string>()
-        //{
-        //    { "1", "vertical" },
-        //    { "0", "horizontal" }
-        //};
-
         public static Dictionary<int, string> Status = new Dictionary<int, string>()
         {
             { 1, "čakajúce" },

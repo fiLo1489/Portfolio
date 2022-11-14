@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using SemestralnaPraca.Models;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Xml.Linq;
 
 namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO doplnenie pridavania fotografii
-        // TODO skript na cistenie uloziska
+        // TODO validacia vkladaneho suboru
         // TODO AJAX
         // TODO doplnenie modulu pre statistiku
         // TODO validacia HTML
@@ -115,19 +116,48 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult PhotoManagement(int category, IFormFile file)
         {
-            // TODO
-            
-            var directory = enviroment.ContentRootPath;
-
-            using (var fileStream = new FileStream(file.FileName, FileMode.Create, FileAccess.Write))
+            try
             {
-                var image = Image.FromFile(file.FileName);
+                string directory = (enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + Translator.Categories.ElementAt(category).Key + "\\");
+                int? id = PhotoController.GetId();
 
-                string heighth = image.Height.ToString();
-                string width = image.Width.ToString();
-                
-                file.CopyTo(fileStream);
+                if (id == null)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    string fileName = (id + ".jpg");
+                    string fullName = Path.Combine(directory, fileName);
+
+                    using (var fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    Image image = Image.FromFile(fullName);
+
+                    PhotoModel photo = new PhotoModel();
+
+                    photo.TITLE = fileName;
+                    photo.CATEGORY = Translator.Categories.ElementAt(category).Key;
+                    photo.ORIENTATION = (image.Width > image.Height ? false : true);
+
+                    if (PhotoController.InsertPhoto(photo))
+                    {
+                        ViewBag.SuccessReply = ("fotografia bola úspešne nahratá");
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
             }
+            catch
+            {
+                ViewBag.ErrorReply = ("nepodarilo sa vložiť fotografiu");
+            }
+            
             return View();
         }
 
@@ -353,15 +383,34 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public IActionResult DeletePhoto(int id)
+        public IActionResult DeletePhoto(int id, string category, string file)
         {
             if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
             {
-                if (PhotoController.DeletePhoto(id))
+                try
                 {
-                    TempData["SuccessReply"] = ("fotografia bola úspešne odstránená");
+                    string fullName = Path.Combine((enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + category + "\\"), file);
+
+                    if (string.IsNullOrEmpty(fullName))
+                    {
+                        if ((System.IO.File.Exists(fullName)))
+                        {
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+                            System.IO.File.Delete(fullName);
+                        }
+
+                        if (PhotoController.DeletePhoto(id))
+                        {
+                            TempData["SuccessReply"] = ("fotografia bola úspešne odstránená");
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                    }
                 }
-                else
+                catch
                 {
                     TempData["ErrorReply"] = ("fotografiu sa nepodarilo odstrániť");
                 }

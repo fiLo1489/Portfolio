@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
+using SemestralnaPraca.Views.Components;
+using System.Transactions;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -25,7 +27,7 @@ namespace SemestralnaPraca.Controllers
                             {
                                 PhotoModel photo = new PhotoModel();
 
-                                photo.ID = int.Parse(reader[0].ToString());
+                                photo.ID = Convert.ToInt32(reader[0].ToString());
                                 photo.TITLE = reader[1].ToString();
                                 photo.CATEGORY = reader[2].ToString();
                                 photo.ORIENTATION = Convert.ToBoolean(Convert.ToInt16(reader[3].ToString()));
@@ -113,7 +115,7 @@ namespace SemestralnaPraca.Controllers
                             {
                                 PhotoModel photo = new PhotoModel();
 
-                                photo.ID = int.Parse(reader[0].ToString());
+                                photo.ID = Convert.ToInt32(reader[0].ToString());
                                 photo.TITLE = reader[1].ToString();
                                 photo.CATEGORY = reader[2].ToString();
                                 photo.ORIENTATION = Convert.ToBoolean(Convert.ToInt16(reader[3].ToString()));
@@ -129,6 +131,30 @@ namespace SemestralnaPraca.Controllers
             catch
             {
                 return null;
+            }
+        }
+
+        public static bool InsertPhoto(PhotoModel photo)
+        {
+            try
+            {
+                string query = "insert into PHOTOS values ('" + photo.TITLE + "', '" + photo.CATEGORY + "', '" + (photo.ORIENTATION ? "1" : "0") + "')";
+
+                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                {
+                    connection.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -152,6 +178,31 @@ namespace SemestralnaPraca.Controllers
             catch 
             { 
                 return false; 
+            }
+        }
+
+        public static int? GetId()
+        {
+            try
+            {
+                int value = 0;
+
+                string query = "select (max(ID) + 1) from PHOTOS";
+
+                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                {
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        value = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+
+                return value;
+            }
+            catch
+            {
+                return null;
             }
         }
 
