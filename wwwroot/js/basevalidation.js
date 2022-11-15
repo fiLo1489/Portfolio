@@ -94,7 +94,7 @@ function isPhoneValid(value)
 
 function isMailValid(value)
 {
-	if (value.includes('@') && value.includes('.') && value.length > 255)
+	if (value.includes('@') && value.includes('.') && value.length <= 255)
 	{
 		return true;
 	}
@@ -104,4 +104,27 @@ function isMailValid(value)
 	}
 }
 
-export { setErrorFor, setSuccessFor, unsetFor, areNumbers, containsNumbers, hasLowerCase, hasUpperCase, injectionProtection, isPasswordValid, isPhoneValid, isMailValid };
+function isResolutionValid(value)
+{
+	var reader = new FileReader();
+	reader.readAsDataURL(value);
+	reader.onload = function (e)
+	{
+		var image = new Image();
+		image.src = e.target.result;
+
+		image.onload = function ()
+		{
+			if ((this.height == 800 && this.width == 1200) || (this.height == 1200 && this.width == 800))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+}
+
+export { setErrorFor, setSuccessFor, unsetFor, areNumbers, containsNumbers, hasLowerCase, hasUpperCase, injectionProtection, isPasswordValid, isPhoneValid, isMailValid, isResolutionValid };

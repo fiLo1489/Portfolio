@@ -40,7 +40,7 @@
         <div id="file" class="form-group row padding-light">
             <label for="fileInput" class="col-xl-2 col-form-label">Súbor</label>
             <div class="col-xl-10">
-                <input type="file" class="form-control light-border bright-border dark-background bright-color rounded-0" name="File" id="fileInput" runat="server">
+                <input type="file" class="form-control light-border bright-border dark-background bright-color rounded-0" accept="image/jpeg" name="File" id="fileInput" runat="server">
             </div>
             <a id="fileMessage"></a>
         </div>
@@ -74,3 +74,5 @@
 
     <component type="typeof(Splitter)" param-File="@((i + 3) + ".jpg")" render-mode="ServerPrerendered" />
 }
+
+<script type="module" src="~/js/filevalidation.js"></script>
