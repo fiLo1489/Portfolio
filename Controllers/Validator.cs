@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Transactions;
 
 namespace SemestralnaPraca.Controllers
 {
@@ -47,6 +48,18 @@ namespace SemestralnaPraca.Controllers
                 return true;
             }
             else
+            {
+                return false;
+            }
+        }
+
+        public static bool IsPictureValid(int width, int heigth)
+        {
+            if (((width / heigth) == (16 / 10))|| ((heigth / width) == (16 / 10)))
+            {
+                return true;
+            }
+            else 
             {
                 return false;
             }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using SemestralnaPraca.Models;
 using SemestralnaPraca.Views.Components;
+using System.Drawing;
 using System.Transactions;
 
 namespace SemestralnaPraca.Controllers
@@ -203,6 +204,45 @@ namespace SemestralnaPraca.Controllers
             catch
             {
                 return null;
+            }
+        }
+
+        public static bool CopyImage(string path, IFormFile file)
+        {
+            try
+            {
+                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool DeleteImage(string path)
+        {
+            try
+            {
+                if ((File.Exists(path)))
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    System.IO.File.Delete(path);
+                    return true;
+                }
+                else
+                { 
+                    return false;
+                }
+            }
+            catch 
+            {
+                return false;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SemestralnaPraca.Models;
 using System.Data;
 using System.Diagnostics;
@@ -9,8 +10,6 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO pretriedit export funkcie
-        // TODO kontrola na strane servera
         // TODO AJAX
         // TODO doplnenie modulu pre statistiku
         // TODO validacia HTML
@@ -127,25 +126,34 @@ namespace SemestralnaPraca.Controllers
                 }
                 else
                 {
-                    string fileName = (id + ".jpg");
-                    string fullName = Path.Combine(directory, fileName);
+                    string path = Path.Combine(directory, (id + ".jpg"));
+                    bool copy = PhotoController.CopyImage(path, file);
 
-                    using (var fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+                    if (copy)
                     {
-                        file.CopyTo(fileStream);
-                    }
+                        Image image = Image.FromFile(path);
 
-                    Image image = Image.FromFile(fullName);
+                        if (Validator.IsPictureValid(image.Width, image.Height))
+                        {
+                            PhotoModel photo = new PhotoModel();
+                            photo.TITLE = path;
+                            photo.CATEGORY = Translator.Categories.ElementAt(category).Key;
+                            photo.ORIENTATION = (image.Width > image.Height ? false : true);
 
-                    PhotoModel photo = new PhotoModel();
-
-                    photo.TITLE = fileName;
-                    photo.CATEGORY = Translator.Categories.ElementAt(category).Key;
-                    photo.ORIENTATION = (image.Width > image.Height ? false : true);
-
-                    if (PhotoController.InsertPhoto(photo))
-                    {
-                        ViewBag.SuccessReply = ("fotografia bola úspešne nahratá");
+                            if (PhotoController.InsertPhoto(photo))
+                            {
+                                ViewBag.SuccessReply = ("fotografia bola úspešne nahratá");
+                            }
+                            else
+                            {
+                                throw new Exception();
+                            }
+                        }
+                        else
+                        {
+                            PhotoController.DeleteImage(path);
+                            throw new Exception();
+                        }
                     }
                     else
                     {
@@ -389,17 +397,15 @@ namespace SemestralnaPraca.Controllers
             {
                 try
                 {
-                    string fullName = Path.Combine((enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + category + "\\"), file);
+                    string path = Path.Combine((enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + category + "\\"), file);
 
-                    if (string.IsNullOrEmpty(fullName))
+                    if (string.IsNullOrEmpty(path))
                     {
-                        if ((System.IO.File.Exists(fullName)))
+                        if (!PhotoController.DeleteImage(path))
                         {
-                            GC.Collect();
-                            GC.WaitForPendingFinalizers();
-                            System.IO.File.Delete(fullName);
+                            throw new Exception();
                         }
-
+                        
                         if (PhotoController.DeletePhoto(id))
                         {
                             TempData["SuccessReply"] = ("fotografia bola úspešne odstránená");

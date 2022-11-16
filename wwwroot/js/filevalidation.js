@@ -25,7 +25,7 @@ form.addEventListener('submit', e =>
 
 			if (!resolution)
 			{
-				fileMessage += 'fotografia nemá požadovaný rozmer 1200x800 alebo 800x1200';
+				fileMessage += 'fotografia nemá požadovaný pomer 16:10 alebo 10:16';
 			}
 		}
 	}

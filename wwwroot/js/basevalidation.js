@@ -115,7 +115,7 @@ function isResolutionValid(value)
 
 		image.onload = function ()
 		{
-			if ((this.height == 800 && this.width == 1200) || (this.height == 1200 && this.width == 800))
+			if (((this.width / this.height) == (16 / 10)) || ((this.height / this.width) == (16 / 10)))
 			{
 				return true;
 			}
