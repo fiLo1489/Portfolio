@@ -42,7 +42,6 @@
             <div class="col-xl-10">
                 <input type="file" class="form-control light-border bright-border dark-background bright-color rounded-0" accept="image/jpeg" name="File" id="fileInput" runat="server">
             </div>
-            <a id="fileMessage"></a>
         </div>
         <button type="submit" value="Submit" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3 light-text">NAHRAŤ</button>
     </form>
@@ -74,5 +73,3 @@
 
     <component type="typeof(Splitter)" param-File="@((i + 3) + ".jpg")" render-mode="ServerPrerendered" />
 }
-
-<script type="module" src="~/js/filevalidation.js"></script>

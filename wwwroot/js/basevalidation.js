@@ -104,27 +104,4 @@ function isMailValid(value)
 	}
 }
 
-function isResolutionValid(value)
-{
-	var reader = new FileReader();
-	reader.readAsDataURL(value);
-	reader.onload = function (e)
-	{
-		var image = new Image();
-		image.src = e.target.result;
-
-		image.onload = function ()
-		{
-			if (((this.width / this.height) == (16 / 10)) || ((this.height / this.width) == (16 / 10)))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-}
-
-export { setErrorFor, setSuccessFor, unsetFor, injectionProtection, isPasswordValid, isPhoneValid, isMailValid, isResolutionValid };
+export { setErrorFor, setSuccessFor, unsetFor, injectionProtection, isPasswordValid, isPhoneValid, isMailValid };

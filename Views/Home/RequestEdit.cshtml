@@ -73,7 +73,7 @@
             <div id="description" class="form-group row padding-light">
                 <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
                 <div class="col-xl-10">
-                    <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" rows="5" name="Description" id="descriptionInput"></textarea>
+                    <textarea class="form-control light-border bright-border dark-background bright-color rounded-0" rows="5" name="Description" id="descriptionInput">@(request.DESCRIPTION)</textarea>
                 </div>
                 <a id="descriptionMessage"></a>
             </div>
@@ -90,7 +90,7 @@
             <div id="description" class="form-group row padding-light">
                 <label for="descriptionInput" class="col-xl-2 col-form-label">Popis</label>
                 <div class="col-xl-10">
-                    <textarea class="form-control light-border bright-border dark-background bright-color rounded-0 highlight-background" rows="5" name="Description" id="descriptionInput" readonly></textarea>
+                    <textarea class="form-control light-border bright-border dark-background bright-color rounded-0 highlight-background" rows="5" name="Description" id="descriptionInput" readonly>@(request.DESCRIPTION)</textarea>
                 </div>
                 <a id="descriptionMessage"></a>
             </div>

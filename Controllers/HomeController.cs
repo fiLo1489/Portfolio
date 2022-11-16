@@ -94,7 +94,7 @@ namespace SemestralnaPraca.Controllers
             request.STATUS = Translator.Status.ElementAt(status).Value;
             request.RESULT = result;
 
-            bool? output = RequestController.UpdateRequest(request);
+            bool? output = RequestController.UpdateRequest(request, (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2))
 
             if (output == true)
             {
@@ -126,7 +126,8 @@ namespace SemestralnaPraca.Controllers
                 }
                 else
                 {
-                    string path = Path.Combine(directory, (id + ".jpg"));
+                    string name = (id + ".jpg");
+                    string path = Path.Combine(directory, name);
                     bool copy = PhotoController.CopyImage(path, file);
 
                     if (copy)
@@ -136,7 +137,7 @@ namespace SemestralnaPraca.Controllers
                         if (Validator.IsPictureValid(image.Width, image.Height))
                         {
                             PhotoModel photo = new PhotoModel();
-                            photo.TITLE = path;
+                            photo.TITLE = name;
                             photo.CATEGORY = Translator.Categories.ElementAt(category).Key;
                             photo.ORIENTATION = (image.Width > image.Height ? false : true);
 
@@ -399,7 +400,7 @@ namespace SemestralnaPraca.Controllers
                 {
                     string path = Path.Combine((enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + category + "\\"), file);
 
-                    if (string.IsNullOrEmpty(path))
+                    if (!string.IsNullOrEmpty(path))
                     {
                         if (!PhotoController.DeleteImage(path))
                         {

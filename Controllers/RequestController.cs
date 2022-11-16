@@ -176,7 +176,7 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public static bool? UpdateRequest(RequestModel request)
+        public static bool? UpdateRequest(RequestModel request, bool admin)
         {
             if (!Validator.IsSqlInjection(request.DESCRIPTION))
             {
@@ -185,10 +185,24 @@ namespace SemestralnaPraca.Controllers
                     bool available = true;
 
                     string availableQuery = ("select count(*) from REQUESTS where SCHEDULED = '" + request.SCHEDULED + "' and ID != '" + request.ID + "'");
-                    string updateQuery = ("update REQUESTS set SCHEDULED = '" + request.SCHEDULED + "', DESCRIPTION = " +
-                        (string.IsNullOrEmpty(request.DESCRIPTION) ? "NULL" : ("'" + request.DESCRIPTION + "'")) + ", STATUS = '" +
-                        Translator.Status.FirstOrDefault(x => x.Value == request.STATUS).Key + "', RESULT = " +
-                        (string.IsNullOrEmpty(request.RESULT) ? "NULL" : ("'" + request.RESULT + "'")) + " where ID = '" + request.ID + "'");
+                    string updateQuery;
+
+                    if (admin)
+                    {
+                        updateQuery = ("update REQUESTS set SCHEDULED = '" + request.SCHEDULED + "', DESCRIPTION = " +
+                            (string.IsNullOrEmpty(request.DESCRIPTION) ? "NULL" : ("'" + request.DESCRIPTION + "'")) + ", STATUS = '" +
+                            Translator.Status.FirstOrDefault(x => x.Value == request.STATUS).Key + "', RESULT = " +
+                            (string.IsNullOrEmpty(request.RESULT) ? "NULL" : ("'" + request.RESULT + "'")) + " where ID = '" + request.ID + "'");
+                    }
+                    else if (!admin && request.STATUS == Translator.Status[1])
+                    {
+                        updateQuery = ("update REQUESTS set SCHEDULED = '" + request.SCHEDULED + "', DESCRIPTION = " +
+                            (string.IsNullOrEmpty(request.DESCRIPTION) ? "NULL" : ("'" + request.DESCRIPTION + "'")) + " where ID = '" + request.ID + "'");
+                    }
+                    else
+                    {
+                        return null;
+                    }
 
                     using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                     {
