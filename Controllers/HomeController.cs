@@ -10,8 +10,7 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO AJAX
-        // TODO doplnenie modulu pre statistiku
+        // TODO AJAX pre zobrazovanie statistiky
         // TODO validacia HTML
 
         private readonly IHttpContextAccessor context;
@@ -94,7 +93,7 @@ namespace SemestralnaPraca.Controllers
             request.STATUS = Translator.Status.ElementAt(status).Value;
             request.RESULT = result;
 
-            bool? output = RequestController.UpdateRequest(request, (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2))
+            bool? output = RequestController.UpdateRequest(request, (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2));
 
             if (output == true)
             {
@@ -257,6 +256,18 @@ namespace SemestralnaPraca.Controllers
             }
 
             return View();
+        }
+
+        public IActionResult Statistics()
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         public IActionResult UserManagement()

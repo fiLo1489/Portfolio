@@ -51,6 +51,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="PhotoManagement">SPRÁVA FOTOGRAFIÍ</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link bright-color light-text" asp-area="" asp-controller="Home" asp-action="Statistics">ŠTATISTIKA</a>
+                                    </li>
                                 }
                                 else
                                 {
@@ -120,6 +123,7 @@
         </div>
     </footer>
     <script src="~/validator.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
