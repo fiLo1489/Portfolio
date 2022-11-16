@@ -90,30 +90,44 @@ namespace SemestralnaPraca.Controllers
 
         public static bool UpdateUser(UserModel user)
         {
-            try
+            if (!Validator.IsSqlInjection(user.NAME) && !Validator.IsSqlInjection(user.SURNAME) && Validator.IsPhoneValid(user.PHONE))
             {
-                string query = ("update CREDENTIALS set NAME = '" + user.NAME + "', SURNAME = '" + user.SURNAME + "', PHONE = '"
-                + user.PHONE + "', ROLE = '" + user.ROLE + "'");
-
-                if (!string.IsNullOrEmpty(user.PASSWORD))
+                try
                 {
-                    query += (", PASSWORD = '" + user.PASSWORD + "'");
-                }
+                    string query = ("update CREDENTIALS set NAME = '" + user.NAME + "', SURNAME = '" + user.SURNAME + "', PHONE = '"
+                    + user.PHONE + "', ROLE = '" + user.ROLE + "'");
 
-                query += (" where MAIL = '" + user.MAIL + "'");
-
-                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
-                {
-                    connection.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    if (!string.IsNullOrEmpty(user.PASSWORD))
                     {
-                        cmd.ExecuteNonQuery();
+                        if (Validator.IsPasswordValid(user.PASSWORD))
+                        {
+                            query += (", PASSWORD = '" + user.PASSWORD + "'");
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
-                }
 
-                return true;
+                    query += (" where MAIL = '" + user.MAIL + "'");
+
+                    using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                    {
+                        connection.Open();
+                        using (SqlCommand cmd = new SqlCommand(query, connection))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
-            catch
+            else
             {
                 return false;
             }
@@ -144,35 +158,42 @@ namespace SemestralnaPraca.Controllers
 
         public static bool? InsertUser(UserModel user)
         {
-            try
+            if (!Validator.IsSqlInjection(user.NAME) && !Validator.IsSqlInjection(user.SURNAME) && Validator.IsPhoneValid(user.PHONE) && Validator.IsPasswordValid(user.PASSWORD))
             {
-                bool exists = false;
-
-                string existsQuery = "select count(*) from CREDENTIALS where MAIL='" + user.MAIL + "'";
-                string registerQuery = "insert into CREDENTIALS values " +
-                    "('" + user.MAIL + "', '" + GetPassword(user.PASSWORD) + "', '" + user.NAME + "', '" + user.SURNAME + "', '" + user.PHONE + "', '" + user.ROLE + "')";
-
-                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                try
                 {
-                    connection.Open();
+                    bool exists = false;
 
-                    using (SqlCommand cmd = new SqlCommand(existsQuery, connection))
-                    {
-                        exists = (Convert.ToInt32(cmd.ExecuteScalar()) != 0 ? true : false);
-                    }
+                    string existsQuery = "select count(*) from CREDENTIALS where MAIL='" + user.MAIL + "'";
+                    string registerQuery = "insert into CREDENTIALS values " +
+                        "('" + user.MAIL + "', '" + GetPassword(user.PASSWORD) + "', '" + user.NAME + "', '" + user.SURNAME + "', '" + user.PHONE + "', '" + user.ROLE + "')";
 
-                    if (!exists)
+                    using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                     {
-                        using (SqlCommand cmd = new SqlCommand(registerQuery, connection))
+                        connection.Open();
+
+                        using (SqlCommand cmd = new SqlCommand(existsQuery, connection))
                         {
-                            cmd.ExecuteNonQuery();
+                            exists = (Convert.ToInt32(cmd.ExecuteScalar()) != 0 ? true : false);
+                        }
+
+                        if (!exists)
+                        {
+                            using (SqlCommand cmd = new SqlCommand(registerQuery, connection))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
-                }
 
-                return exists;
+                    return exists;
+                }
+                catch
+                {
+                    return null;
+                }
             }
-            catch
+            else
             {
                 return null;
             }

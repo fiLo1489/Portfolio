@@ -9,7 +9,6 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO validacia vkladaneho suboru
         // TODO pretriedit export funkcie
         // TODO kontrola na strane servera
         // TODO AJAX
@@ -62,7 +61,7 @@ namespace SemestralnaPraca.Controllers
                 request.SCHEDULED = date;
                 request.USER = user;
 
-                bool? output = RequestController.InsertRequest(request) == true;
+                bool? output = RequestController.InsertRequest(request);
 
                 if (output == true)
                 {
@@ -117,48 +116,47 @@ namespace SemestralnaPraca.Controllers
         [HttpPost]
         public IActionResult PhotoManagement(int category, IFormFile file)
         {
-            // TODO
-            //try
-            //{
-            //    string directory = (enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + Translator.Categories.ElementAt(category).Key + "\\");
-            //    int? id = PhotoController.GetId();
+            try
+            {
+                string directory = (enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + Translator.Categories.ElementAt(category).Key + "\\");
+                int? id = PhotoController.GetId();
 
-            //    if (id == null)
-            //    {
-            //        throw new Exception();
-            //    }
-            //    else
-            //    {
-            //        string fileName = (id + ".jpg");
-            //        string fullName = Path.Combine(directory, fileName);
+                if (id == null)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    string fileName = (id + ".jpg");
+                    string fullName = Path.Combine(directory, fileName);
 
-            //        using (var fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
-            //        {
-            //            file.CopyTo(fileStream);
-            //        }
+                    using (var fileStream = new FileStream(fullName, FileMode.Create, FileAccess.Write))
+                    {
+                        file.CopyTo(fileStream);
+                    }
 
-            //        Image image = Image.FromFile(fullName);
+                    Image image = Image.FromFile(fullName);
 
-            //        PhotoModel photo = new PhotoModel();
+                    PhotoModel photo = new PhotoModel();
 
-            //        photo.TITLE = fileName;
-            //        photo.CATEGORY = Translator.Categories.ElementAt(category).Key;
-            //        photo.ORIENTATION = (image.Width > image.Height ? false : true);
+                    photo.TITLE = fileName;
+                    photo.CATEGORY = Translator.Categories.ElementAt(category).Key;
+                    photo.ORIENTATION = (image.Width > image.Height ? false : true);
 
-            //        if (PhotoController.InsertPhoto(photo))
-            //        {
-            //            ViewBag.SuccessReply = ("fotografia bola úspešne nahratá");
-            //        }
-            //        else
-            //        {
-            //            throw new Exception();
-            //        }
-            //    }
-            //}
-            //catch
-            //{
-            //    ViewBag.ErrorReply = ("nepodarilo sa vložiť fotografiu");
-            //}
+                    if (PhotoController.InsertPhoto(photo))
+                    {
+                        ViewBag.SuccessReply = ("fotografia bola úspešne nahratá");
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+            }
+            catch
+            {
+                ViewBag.ErrorReply = ("nepodarilo sa vložiť fotografiu");
+            }
 
             return View();
         }

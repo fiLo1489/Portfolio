@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using NuGet.Protocol.Plugins;
 using SemestralnaPraca.Models;
 
 namespace SemestralnaPraca.Controllers
@@ -96,36 +95,43 @@ namespace SemestralnaPraca.Controllers
         
         public static bool? InsertRequest(RequestModel request)
         {
-            try
+            if (!Validator.IsSqlInjection(request.DESCRIPTION))
             {
-                bool available = true;
-                
-                string availableQuery = ("select count(*) from REQUESTS where SCHEDULED='" + request.SCHEDULED + "'");
-                string createQuery = ("insert into REQUESTS values " +
-                    "('" + request.USER + "', '" + request.CATEGORY + "', '1', " + (string.IsNullOrEmpty(request.DESCRIPTION) ? "null" : ("'" + request.DESCRIPTION+ "'")) + 
-                    ", getdate(), '" + request.SCHEDULED + "', " + (string.IsNullOrEmpty(request.RESULT) ? "null)" : ("'" + request.RESULT + "')")));
-
-                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                try
                 {
-                    connection.Open();
+                    bool available = true;
 
-                    using (SqlCommand cmd = new SqlCommand(availableQuery, connection))
+                    string availableQuery = ("select count(*) from REQUESTS where SCHEDULED='" + request.SCHEDULED + "'");
+                    string createQuery = ("insert into REQUESTS values " +
+                        "('" + request.USER + "', '" + request.CATEGORY + "', '1', " + (string.IsNullOrEmpty(request.DESCRIPTION) ? "null" : ("'" + request.DESCRIPTION + "'")) +
+                        ", getdate(), '" + request.SCHEDULED + "', " + (string.IsNullOrEmpty(request.RESULT) ? "null)" : ("'" + request.RESULT + "')")));
+
+                    using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                     {
-                        available = (Convert.ToInt32(cmd.ExecuteScalar()) == 0 ? true : false);
-                    }
+                        connection.Open();
 
-                    if (available)
-                    { 
-                        using (SqlCommand cmd = new SqlCommand(createQuery, connection))
+                        using (SqlCommand cmd = new SqlCommand(availableQuery, connection))
                         {
-                            cmd.ExecuteNonQuery();
+                            available = (Convert.ToInt32(cmd.ExecuteScalar()) == 0 ? true : false);
+                        }
+
+                        if (available)
+                        {
+                            using (SqlCommand cmd = new SqlCommand(createQuery, connection))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
-                }
 
-                return available;
+                    return available;
+                }
+                catch
+                {
+                    return null;
+                }
             }
-            catch
+            else
             {
                 return null;
             }
@@ -172,37 +178,44 @@ namespace SemestralnaPraca.Controllers
 
         public static bool? UpdateRequest(RequestModel request)
         {
-            try
+            if (!Validator.IsSqlInjection(request.DESCRIPTION))
             {
-                bool available = true;
-
-                string availableQuery = ("select count(*) from REQUESTS where SCHEDULED = '" + request.SCHEDULED + "' and ID != '" + request.ID + "'");
-                string updateQuery = ("update REQUESTS set SCHEDULED = '" + request.SCHEDULED + "', DESCRIPTION = " + 
-                    (string.IsNullOrEmpty(request.DESCRIPTION) ? "NULL" : ("'" + request.DESCRIPTION + "'")) + ", STATUS = '" + 
-                    Translator.Status.FirstOrDefault(x => x.Value == request.STATUS).Key + "', RESULT = " + 
-                    (string.IsNullOrEmpty(request.RESULT) ? "NULL" : ("'" + request.RESULT + "'")) + " where ID = '" + request.ID + "'");
-
-                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+                try
                 {
-                    connection.Open();
+                    bool available = true;
 
-                    using (SqlCommand cmd = new SqlCommand(availableQuery, connection))
-                    {
-                        available = (Convert.ToInt32(cmd.ExecuteScalar()) == 0 ? true : false);
-                    }
+                    string availableQuery = ("select count(*) from REQUESTS where SCHEDULED = '" + request.SCHEDULED + "' and ID != '" + request.ID + "'");
+                    string updateQuery = ("update REQUESTS set SCHEDULED = '" + request.SCHEDULED + "', DESCRIPTION = " +
+                        (string.IsNullOrEmpty(request.DESCRIPTION) ? "NULL" : ("'" + request.DESCRIPTION + "'")) + ", STATUS = '" +
+                        Translator.Status.FirstOrDefault(x => x.Value == request.STATUS).Key + "', RESULT = " +
+                        (string.IsNullOrEmpty(request.RESULT) ? "NULL" : ("'" + request.RESULT + "'")) + " where ID = '" + request.ID + "'");
 
-                    if (available)
+                    using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                     {
-                        using (SqlCommand cmd = new SqlCommand(updateQuery, connection))
+                        connection.Open();
+
+                        using (SqlCommand cmd = new SqlCommand(availableQuery, connection))
                         {
-                            cmd.ExecuteNonQuery();
+                            available = (Convert.ToInt32(cmd.ExecuteScalar()) == 0 ? true : false);
+                        }
+
+                        if (available)
+                        {
+                            using (SqlCommand cmd = new SqlCommand(updateQuery, connection))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
-                }
 
-                return available;
+                    return available;
+                }
+                catch
+                {
+                    return null;
+                }
             }
-            catch
+            else
             {
                 return null;
             }

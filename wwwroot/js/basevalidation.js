@@ -68,7 +68,7 @@ function injectionProtection(value)
 function isPasswordValid(value)
 {
 	if ((value.includes('!') || value.includes('.') || value.includes('&') || value.includes('#') || value.includes('/')) &&
-		containsNumbers(value) && hasLowerCase(value) &&hasUpperCase(value))
+		containsNumbers(value) && hasLowerCase(value) && hasUpperCase(value))
 	{
 		return true;
 	}
@@ -127,4 +127,4 @@ function isResolutionValid(value)
 	}
 }
 
-export { setErrorFor, setSuccessFor, unsetFor, areNumbers, containsNumbers, hasLowerCase, hasUpperCase, injectionProtection, isPasswordValid, isPhoneValid, isMailValid, isResolutionValid };
+export { setErrorFor, setSuccessFor, unsetFor, injectionProtection, isPasswordValid, isPhoneValid, isMailValid, isResolutionValid };
