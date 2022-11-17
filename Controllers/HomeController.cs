@@ -10,6 +10,7 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
+        // TODO upratanie home controllera
         // TODO AJAX pre zobrazovanie statistiky
         // TODO validacia HTML
 
@@ -43,6 +44,20 @@ namespace SemestralnaPraca.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+        }
+
+        [HttpPost]
+        public List<object> Statistics(string date)
+        { 
+            List<object> data = new List<object>();
+
+            List<string> labels = Translator.Categories.Values.ToList();
+            data.Add(labels);
+
+            List<int> values = StatisticsController.GetStatistics(date);
+            data.Add(values);
+
+            return data;
         }
 
         [HttpPost]
@@ -504,31 +519,31 @@ namespace SemestralnaPraca.Controllers
 
         public IActionResult Wedding()
         {
-            StatisticsController.Visit("wedding");
+            StatisticsController.InsertStatistic("wedding");
             return View("~/Views/Gallery/Wedding.cshtml");
         }
 
         public IActionResult Event()
         {
-            StatisticsController.Visit("event");
+            StatisticsController.InsertStatistic("event");
             return View("~/Views/Gallery/Event.cshtml");
         }
 
         public IActionResult Car()
         {
-            StatisticsController.Visit("car");
+            StatisticsController.InsertStatistic("car");
             return View("~/Views/Gallery/Car.cshtml");
         }
 
         public IActionResult Nature()
         {
-            StatisticsController.Visit("nature");
+            StatisticsController.InsertStatistic("nature");
             return View("~/Views/Gallery/Nature.cshtml");
         }
 
         public IActionResult Other()
         {
-            StatisticsController.Visit("other");
+            StatisticsController.InsertStatistic("other");
             return View("~/Views/Gallery/Other.cshtml");
         }
 
