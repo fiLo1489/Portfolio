@@ -39,6 +39,13 @@ html, body
     min-height: 17.9vh;
 }
 
+.chart-style
+{
+    height: 60vh;
+    max-height: 60vh;
+    min-height: 60vh;
+}
+
 .background-format
 {
     background-repeat: no-repeat;
@@ -231,12 +238,6 @@ html, body
 {
     color: var(--error) !important;
     visibility: visible;
-}
-
-.graph 
-{
-    width: 100%;
-    height: 100%;
 }
 
 input[type="date"]::-webkit-inner-spin-button,

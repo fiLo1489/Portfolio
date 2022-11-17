@@ -10,10 +10,6 @@ namespace SemestralnaPraca.Controllers
 {
     public class HomeController : Controller
     {
-        // TODO upratanie home controllera
-        // TODO AJAX pre zobrazovanie statistiky
-        // TODO validacia HTML
-
         private readonly IHttpContextAccessor context;
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment enviroment;
         string connectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"];
@@ -24,6 +20,8 @@ namespace SemestralnaPraca.Controllers
             enviroment = hostingEnvironment;
         }
 
+        #region layout
+
         public IActionResult Index()
         {
             return View();
@@ -32,6 +30,108 @@ namespace SemestralnaPraca.Controllers
         public IActionResult About()
         {
             return View();
+        }
+
+        public IActionResult Wedding()
+        {
+            StatisticsController.InsertStatistic("wedding");
+            return View("~/Views/Gallery/Wedding.cshtml");
+        }
+
+        public IActionResult Event()
+        {
+            StatisticsController.InsertStatistic("event");
+            return View("~/Views/Gallery/Event.cshtml");
+        }
+
+        public IActionResult Car()
+        {
+            StatisticsController.InsertStatistic("car");
+            return View("~/Views/Gallery/Car.cshtml");
+        }
+
+        public IActionResult Nature()
+        {
+            StatisticsController.InsertStatistic("nature");
+            return View("~/Views/Gallery/Nature.cshtml");
+        }
+
+        public IActionResult Other()
+        {
+            StatisticsController.InsertStatistic("other");
+            return View("~/Views/Gallery/Other.cshtml");
+        }
+
+        #endregion
+
+        #region request
+
+        public IActionResult RequestManagement()
+        {
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewBag.SuccessReply = TempData["SuccessReply"];
+                ViewBag.ErrorReply = TempData["ErrorReply"];
+                return View();
+            }
+        }
+
+        public IActionResult EditRequest(string id)
+        {
+            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            {
+                TempData["Id"] = id;
+                return RedirectToAction("RequestEdit", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult DeleteRequest(string id)
+        {
+            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            {
+                bool admin = (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false;
+                bool? output = RequestController.DeleteRequest(id, admin);
+
+                if (output == true)
+                {
+                    TempData["SuccessReply"] = ("požiadavka číslo " + id + " bola odstránená");
+                }
+                else if (output == false)
+                {
+                    TempData["ErrorReply"] = ("požiadavku číslo " + id + " nemožno odstrániť pretože už nie je čakajúca");
+                }
+                else
+                {
+                    TempData["ErrorReply"] = ("požiadavku číslo " + id + " sa nepodarilo odstrániť");
+                }
+
+                return RedirectToAction("RequestManagement", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult RequestEdit()
+        {
+            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewBag.Id = TempData["Id"];
+                return View();
+            }
         }
 
         public IActionResult FormSubmit()
@@ -44,20 +144,6 @@ namespace SemestralnaPraca.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-        }
-
-        [HttpPost]
-        public List<object> Statistics(string date)
-        { 
-            List<object> data = new List<object>();
-
-            List<string> labels = Translator.Categories.Values.ToList();
-            data.Add(labels);
-
-            List<int> values = StatisticsController.GetStatistics(date);
-            data.Add(values);
-
-            return data;
         }
 
         [HttpPost]
@@ -92,7 +178,7 @@ namespace SemestralnaPraca.Controllers
                 return View();
             }
             else
-            { 
+            {
                 return RedirectToAction("Index", "Home");
             }
         }
@@ -124,6 +210,99 @@ namespace SemestralnaPraca.Controllers
             }
 
             return View();
+        }
+
+        #endregion
+
+        #region statistic
+
+        [HttpPost]
+        public List<object> Statistics(string date)
+        {
+            List<object> data = new List<object>();
+
+            Dictionary<string, int> items = StatisticsController.GetStatistics(date);
+            List<string> labels = new List<string>();
+            List<int> values = new List<int>();
+
+            foreach (KeyValuePair<string, int> item in items)
+            {
+                labels.Add(item.Key);
+                values.Add(item.Value);
+            }
+
+            data.Add(labels);
+            data.Add(values);
+
+            return data;
+        }
+
+        public IActionResult Statistics()
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        #endregion
+
+        #region photo
+
+        public IActionResult PhotoManagement()
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                ViewBag.SuccessReply = TempData["SuccessReply"];
+                ViewBag.ErrorReply = TempData["ErrorReply"];
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public IActionResult DeletePhoto(int id, string category, string file)
+        {
+            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
+            {
+                try
+                {
+                    string path = Path.Combine((enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + category + "\\"), file);
+
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        if (!PhotoController.DeleteImage(path))
+                        {
+                            throw new Exception();
+                        }
+
+                        if (PhotoController.DeletePhoto(id))
+                        {
+                            TempData["SuccessReply"] = ("fotografia bola úspešne odstránená");
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                    }
+                }
+                catch
+                {
+                    TempData["ErrorReply"] = ("fotografiu sa nepodarilo odstrániť");
+                }
+
+                return RedirectToAction("PhotoManagement", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
@@ -184,6 +363,29 @@ namespace SemestralnaPraca.Controllers
             return View();
         }
 
+        #endregion
+
+        #region user
+
+        public IActionResult Logout()
+        {
+            LogoutAction();
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        private void LoginAction(string mail, string role)
+        {
+            context.HttpContext.Session.SetString(Variables.Mail, mail);
+            context.HttpContext.Session.SetString(Variables.Role, role);
+        }
+
+        private void LogoutAction()
+        {
+            context.HttpContext.Session.SetString(Variables.Mail, string.Empty);
+            context.HttpContext.Session.SetString(Variables.Role, string.Empty);
+        }
+
         public IActionResult Register()
         {
             if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
@@ -209,10 +411,10 @@ namespace SemestralnaPraca.Controllers
 
             user.MAIL = mail;
             user.NAME = name;
-            user.SURNAME= surname;
-            user.PHONE= phone;
+            user.SURNAME = surname;
+            user.PHONE = phone;
             user.PASSWORD = password;
-            user.ROLE= role;
+            user.ROLE = role;
 
             bool? output = UserController.InsertUser(user);
 
@@ -273,18 +475,6 @@ namespace SemestralnaPraca.Controllers
             return View();
         }
 
-        public IActionResult Statistics()
-        {
-            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
         public IActionResult UserManagement()
         {
             if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
@@ -299,39 +489,11 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public IActionResult PhotoManagement()
-        {
-            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
-            {
-                ViewBag.SuccessReply = TempData["SuccessReply"];
-                ViewBag.ErrorReply = TempData["ErrorReply"];
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        public IActionResult RequestManagement()
-        {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                ViewBag.SuccessReply = TempData["SuccessReply"];
-                ViewBag.ErrorReply = TempData["ErrorReply"];
-                return View();
-            }
-        }
-
-        public IActionResult AccountDetails() 
+        public IActionResult AccountDetails()
         {
             string user = context.HttpContext.Session.GetString(Variables.Mail);
             var request = TempData["User"];
-            
+
             if (string.IsNullOrEmpty(user))
             {
                 return RedirectToAction("Index", "Home");
@@ -418,146 +580,7 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public IActionResult DeletePhoto(int id, string category, string file)
-        {
-            if (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2)
-            {
-                try
-                {
-                    string path = Path.Combine((enviroment.ContentRootPath + "wwwroot\\image\\gallery\\" + category + "\\"), file);
-
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        if (!PhotoController.DeleteImage(path))
-                        {
-                            throw new Exception();
-                        }
-                        
-                        if (PhotoController.DeletePhoto(id))
-                        {
-                            TempData["SuccessReply"] = ("fotografia bola úspešne odstránená");
-                        }
-                        else
-                        {
-                            throw new Exception();
-                        }
-                    }
-                }
-                catch
-                {
-                    TempData["ErrorReply"] = ("fotografiu sa nepodarilo odstrániť");
-                }
-
-                return RedirectToAction("PhotoManagement", "Home");
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        public IActionResult EditRequest(string id)
-        {
-            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
-            {
-                TempData["Id"] = id;
-                return RedirectToAction("RequestEdit", "Home");
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        public IActionResult DeleteRequest(string id)
-        {
-            if (!string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
-            {
-                bool admin = (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false;
-                bool? output = RequestController.DeleteRequest(id, admin);
-
-                if (output == true)
-                {
-                    TempData["SuccessReply"] = ("požiadavka číslo " + id + " bola odstránená");
-                }
-                else if (output == false)
-                {
-                    TempData["ErrorReply"] = ("požiadavku číslo " + id + " nemožno odstrániť pretože už nie je čakajúca");
-                }
-                else
-                {
-                    TempData["ErrorReply"] = ("požiadavku číslo " + id + " sa nepodarilo odstrániť");
-                }
-
-                return RedirectToAction("RequestManagement", "Home");
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        public IActionResult RequestEdit()
-        {
-            if (string.IsNullOrEmpty(context.HttpContext.Session.GetString(Variables.Mail)))
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                ViewBag.Id = TempData["Id"];
-                return View();
-            }
-        }
-
-        public IActionResult Logout()
-        {
-            LogoutAction();
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult Wedding()
-        {
-            StatisticsController.InsertStatistic("wedding");
-            return View("~/Views/Gallery/Wedding.cshtml");
-        }
-
-        public IActionResult Event()
-        {
-            StatisticsController.InsertStatistic("event");
-            return View("~/Views/Gallery/Event.cshtml");
-        }
-
-        public IActionResult Car()
-        {
-            StatisticsController.InsertStatistic("car");
-            return View("~/Views/Gallery/Car.cshtml");
-        }
-
-        public IActionResult Nature()
-        {
-            StatisticsController.InsertStatistic("nature");
-            return View("~/Views/Gallery/Nature.cshtml");
-        }
-
-        public IActionResult Other()
-        {
-            StatisticsController.InsertStatistic("other");
-            return View("~/Views/Gallery/Other.cshtml");
-        }
-
-        private void LoginAction(string mail, string role)
-        {
-            context.HttpContext.Session.SetString(Variables.Mail, mail);
-            context.HttpContext.Session.SetString(Variables.Role, role);
-        }
-
-        private void LogoutAction()
-        {
-            context.HttpContext.Session.SetString(Variables.Mail, string.Empty);
-            context.HttpContext.Session.SetString(Variables.Role, string.Empty);
-        }
+        #endregion
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

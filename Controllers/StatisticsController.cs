@@ -19,16 +19,16 @@ namespace SemestralnaPraca.Controllers
             }
         }
 
-        public static List<int> GetStatistics(string date)
+        public static Dictionary<string, int> GetStatistics(string date)
         {
             try
-            { 
-                List<int> statistics = new List<int>();
+            {
+                Dictionary<string, int> statistics = new Dictionary<string, int>();
 
                 string query = "select TITLE, count(*) from VISITS ";
                 if (!string.IsNullOrEmpty(date))
                 {
-                    query += ("and DATE = '" + date + "' ");
+                    query += ("where DATE = '" + date + "' ");
                 }
                 query += "group by TITLE order by TITLE";
 
@@ -41,7 +41,7 @@ namespace SemestralnaPraca.Controllers
                         {
                             while (reader.Read())
                             {
-                                statistics.Add(Convert.ToInt32(reader[1].ToString()));
+                                statistics.Add(Translator.Categories[reader[0].ToString()], Convert.ToInt32(reader[1].ToString()));
                             }
                         }
                     }

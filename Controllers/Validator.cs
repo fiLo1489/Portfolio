@@ -7,11 +7,18 @@ namespace SemestralnaPraca.Controllers
     {
         public static bool IsMailValid(string value)
         {
-            if (Regex.IsMatch(value, @"([a-z]||[0-9])(@{1})([a-z]+)(\.)([a-z])"))
+            if (!string.IsNullOrEmpty(value))
             {
-                return true;
+                if (Regex.IsMatch(value, @"([a-z]||[0-9])(@{1})([a-z]+)(\.)([a-z])"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            else 
             {
                 return false;
             }
@@ -19,9 +26,16 @@ namespace SemestralnaPraca.Controllers
 
         public static bool IsPhoneValid(string value)
         {
-            if (Regex.IsMatch(value, @"(^\+)([0-9]{10,13})"))
+            if (!string.IsNullOrEmpty(value))
             {
-                return true;
+                if (Regex.IsMatch(value, @"(^\+)([0-9]{10,13})"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
@@ -31,21 +45,35 @@ namespace SemestralnaPraca.Controllers
 
         public static bool IsPasswordValid(string value)
         {
-            if (Regex.IsMatch(value, @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#.!&/]).+"))
+            if (!string.IsNullOrEmpty(value))
             {
-                return true;
+                if (Regex.IsMatch(value, @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#.!&/]).+"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
-            {
-                return false;
+            { 
+                return false; 
             }
         }
 
         public static bool IsSqlInjection(string value)
         {
-            if (Regex.IsMatch(value, @"(alter|update|select|delete)"))
+            if (!string.IsNullOrEmpty(value))
             {
-                return true;
+                if (Regex.IsMatch(value, @"(alter|update|select|delete)"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
