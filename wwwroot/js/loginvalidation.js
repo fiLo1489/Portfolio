@@ -27,7 +27,7 @@ form.addEventListener('submit', e =>
 
 	if (passwordValue === '')
 	{
-		passwordMessage += 'nebol zadaný mail, ';
+		passwordMessage += 'nebolo zadané heslo, ';
 	}
 	else
 	{

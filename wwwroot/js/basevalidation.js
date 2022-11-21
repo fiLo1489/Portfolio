@@ -81,7 +81,7 @@ function isPasswordValid(value)
 function isPhoneValid(value)
 {
 	if (value.startsWith("+") &&
-		value.length < 11 && value.length > 14 &&
+		value.length >= 11 && value.length <= 14 &&
 		areNumbers(value.substring(1, value.length)))
 	{
 		return true;
