@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualBasic;
 using SemestralnaPraca.Models;
 using System.Data;
 using System.Diagnostics;
@@ -221,7 +222,7 @@ namespace SemestralnaPraca.Controllers
         {
             List<object> data = new List<object>();
 
-            Dictionary<string, int> items = StatisticsController.GetStatistics(date);
+            Dictionary<string, int> items = StatisticsController.GetStatisticsDate(date);
             List<string> labels = new List<string>();
             List<int> values = new List<int>();
 
@@ -242,7 +243,28 @@ namespace SemestralnaPraca.Controllers
         {
             List<object> data = new List<object>();
 
-            // TODO udaje
+            int getMonth = month;
+            int getYear = ((DateTime.Now.Month >= month) ? DateTime.Now.Year : (DateTime.Now.Year - 1));
+
+            Dictionary<int, int> items = StatisticsController.GetStatisticsMonth(getYear, getMonth);
+            List<string> labels = new List<string>();
+            List<int> values = new List<int>();
+
+            for (int i = 1; i <= DateTime.DaysInMonth(getYear, getMonth); i++)
+            {
+                labels.Add(i.ToString());
+                if (items.Keys.Contains(i))
+                {
+                    values.Add(items[i]);
+                }
+                else
+                {
+                    values.Add(0);
+                }
+            }
+
+            data.Add(labels);
+            data.Add(values);
 
             return data;
         }

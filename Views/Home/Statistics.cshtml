@@ -6,7 +6,7 @@
 
 <div class="dark-background padding-heavy text-center light-text bright-color">
     <h1 class="heavy-text mb-3">
-        ŠTATISTIKA
+        KATEGÓRIE
     </h1>
     <div>
         <div id="date" class="form-group row padding-light">
@@ -27,25 +27,24 @@
 
 <div class="dark-background padding-heavy text-center light-text bright-color">
     <h1 class="heavy-text mb-3">
-        MESIACE
+        NÁVŠTEVNOSŤ
     </h1>
     <div>
         <div id="month" class="form-group row padding-light">
             <label for="monthInput" class="col-xl-2 col-form-label">Mesiac</label>
             <div class="col-xl-10">
                 <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Month" id="monthInput">
-                    <option>január</option>
-                    <option>február</option>
-                    <option>marec</option>
-                    <option>apríl</option>
-                    <option>máj</option>
-                    <option>jún</option>
-                    <option>júl</option>
-                    <option>august</option>
-                    <option>september</option>
-                    <option>október</option>
-                    <option>november</option>
-                    <option>december</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        if (DateTime.Today.Month == i)
+                        {
+                            <option value="@i" selected>@(new DateTime(DateTime.Today.Year, i, 1).ToString("MMMM"))</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@(new DateTime(DateTime.Today.Year, i, 1).ToString("MMMM"))</option>
+                        }
+                    }
                 </select>
             </div>
         </div>
@@ -139,7 +138,7 @@
         $.ajax(
             {
                 type: "GET",
-                url: ("/Home/StatisticMonth?month=" + document.getElementById('monthInput').value.trim()),
+                url: ("/Home/StatisticMonth?month=" + document.getElementById('monthInput').value),
                 success: OnSuccessResultMonth,
                 error: OnErrorMonth
             });
@@ -188,7 +187,7 @@
 
         function OnErrorMonth(data) 
         {
-            document.getElementById('messageMonth').textContent = 'nepodarilo sa načítať dáta dátumu';
+            document.getElementById('messageMonth').textContent = 'nepodarilo sa načítať dáta mesiaca';
             document.getElementById('messageMonth').visibility = 'visible';
         }
     }
