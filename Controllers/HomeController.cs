@@ -216,8 +216,8 @@ namespace SemestralnaPraca.Controllers
 
         #region statistic
 
-        [HttpPost]
-        public List<object> Statistics(string date)
+        [HttpGet]
+        public List<object> StatisticDate(string date)
         {
             List<object> data = new List<object>();
 
@@ -233,6 +233,16 @@ namespace SemestralnaPraca.Controllers
 
             data.Add(labels);
             data.Add(values);
+
+            return data;
+        }
+
+        [HttpGet]
+        public List<object> StatisticMonth(int month)
+        {
+            List<object> data = new List<object>();
+
+            // TODO udaje
 
             return data;
         }

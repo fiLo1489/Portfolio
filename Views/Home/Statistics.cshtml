@@ -15,33 +15,73 @@
                 <input type="date" class="form-control light-border bright-border dark-background bright-color rounded-0 date" name="Date" id="dateInput">
             </div>
         </div>
-        <button id="refresh" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">OBNOVIŤ</button>
+        <button id="refreshDate" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">OBNOVIŤ</button>
     </div>
     <a id="message" class="error-color"></a>
     <div class="padding-medium">
-        <canvas class="chart-style" id="chart"></canvas>
+        <canvas class="chart-style" id="chartDate"></canvas>
     </div>
 </div>
 
 <component type="typeof(Splitter)" param-File="@("2.jpg")" render-mode="ServerPrerendered" />
 
+<div class="dark-background padding-heavy text-center light-text bright-color">
+    <h1 class="heavy-text mb-3">
+        MESIACE
+    </h1>
+    <div>
+        <div id="month" class="form-group row padding-light">
+            <label for="monthInput" class="col-xl-2 col-form-label">Mesiac</label>
+            <div class="col-xl-10">
+                <select class="form-control light-border bright-border dark-background bright-color rounded-0" name="Month" id="monthInput">
+                    <option>január</option>
+                    <option>február</option>
+                    <option>marec</option>
+                    <option>apríl</option>
+                    <option>máj</option>
+                    <option>jún</option>
+                    <option>júl</option>
+                    <option>august</option>
+                    <option>september</option>
+                    <option>október</option>
+                    <option>november</option>
+                    <option>december</option>
+                </select>
+            </div>
+        </div>
+        <button id="refreshMonth" class="highlight btn btn-primary light-border bright-border dark-background bright-color rounded-0 m-3">OBNOVIŤ</button>
+    </div>
+    <a id="messageMonth" class="error-color"></a>
+    <div class="padding-medium">
+        <canvas class="chart-style" id="chartMonth"></canvas>
+    </div>
+</div>
+
+<component type="typeof(Splitter)" param-File="@("3.jpg")" render-mode="ServerPrerendered" />
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script language="javascript" type="text/javascript">
-    CreateGraph();
+    CreateGraphDate();
+    CreateGraphMonth();
     
-    $("#refresh").click(function ()
+    $("#refreshDate").click(function ()
     {
-        CreateGraph();
+        CreateGraphDate();
     });
 
-    function CreateGraph()
+    $("#refreshMonth").click(function () 
+    {
+        CreateGraphMonth();
+    });
+
+    function CreateGraphDate()
     {
         $.ajax(
         {
-            type: "POST",
-            url: ("/Home/Statistics?date=" + document.getElementById('dateInput').value.trim()),
+            type: "GET",
+            url: ("/Home/StatisticDate?date=" + document.getElementById('dateInput').value.trim()),
             success: OnSuccessResult,
             error: OnError
         });
@@ -52,12 +92,12 @@
             var chartLabels = data[0];
             var chartData = data[1];
 
-            var chartExist = Chart.getChart("chart");
+            var chartExist = Chart.getChart("chartDate");
             if (chartExist != undefined) {
                 chartExist.destroy();
             }
 
-            new Chart("chart",
+            new Chart("chartDate",
             {
                 type: "bar",
                 data:
@@ -83,14 +123,73 @@
                 }
             });
 
-            document.getElementById('message').textContent = '';
-            document.getElementById('message').visibility = 'hidden';
+            document.getElementById('messageDate').textContent = '';
+            document.getElementById('messageDate').visibility = 'hidden';
         }
 
         function OnError(data) 
         {
-            document.getElementById('message').textContent = 'nepodarilo sa načítať dáta';
-            document.getElementById('message').visibility = 'visible';
+            document.getElementById('messageDate').textContent = 'nepodarilo sa načítať dáta dátumu';
+            document.getElementById('messageDate').visibility = 'visible';
+        }
+    }
+
+    function CreateGraphMonth() 
+    {
+        $.ajax(
+            {
+                type: "GET",
+                url: ("/Home/StatisticMonth?month=" + document.getElementById('monthInput').value.trim()),
+                success: OnSuccessResultMonth,
+                error: OnErrorMonth
+            });
+
+        function OnSuccessResultMonth(data) 
+        {
+            var chartData = data;
+            var chartLabels = data[0];
+            var chartData = data[1];
+
+            var chartExist = Chart.getChart("chartMonth");
+            if (chartExist != undefined) 
+            {
+                chartExist.destroy();
+            }
+
+            new Chart("chartMonth",
+                {
+                    type: "bar",
+                    data:
+                    {
+                        labels: chartLabels,
+                        datasets:
+                            [{
+                                backgroundColor: "rgba(240,240,240,1)",
+                                data: chartData
+                            }]
+                    },
+                    options:
+                    {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins:
+                        {
+                            legend:
+                            {
+                                display: false
+                            },
+                        }
+                    }
+                });
+
+            document.getElementById('messageMonth').textContent = '';
+            document.getElementById('messageMonth').visibility = 'hidden';
+        }
+
+        function OnErrorMonth(data) 
+        {
+            document.getElementById('messageMonth').textContent = 'nepodarilo sa načítať dáta dátumu';
+            document.getElementById('messageMonth').visibility = 'visible';
         }
     }
 </script>
