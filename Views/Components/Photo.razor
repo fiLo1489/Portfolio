@@ -3,7 +3,7 @@
         <div class="margin-light">
             <img src="/image/gallery/@(Category)/@(File)" alt="@Category">
             <div class="mt-2">
-                <a class="bright-color light-text" href="/Home/DeletePhoto?id=@(Id)&file=@(File)&category=@(Category)">
+                <a class="bright-color light-text" href="/Home/DeletePhoto?id=@(Id)&file=@(File)&category=@(Category)" onclick="return confirm('Naozaj si prajete odstrániť fotografiu? Akcia je nezvratná!')">
                     <i class="bi bi-trash3"></i>
                 </a>
             </div>
