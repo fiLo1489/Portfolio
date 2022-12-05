@@ -6,17 +6,26 @@ namespace SemestralnaPraca.Controllers
 {
     public static class StatisticsController
     {
-        public static void InsertStatistic(string category)
+        public static bool InsertStatistic(string category)
         {
-            string query = ("insert into VISITS values ('" + category + "', getdate())");
-
-            using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
+            try
             {
-                connection.Open();
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                string query = ("insert into VISITS values ('" + category + "', getdate())");
+
+                using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {
-                    cmd.ExecuteNonQuery();
+                    connection.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
