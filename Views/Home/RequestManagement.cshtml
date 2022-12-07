@@ -4,7 +4,9 @@
 @{
     ViewData["Title"] = "Správa žiadostí";
 
-    List<RequestModel> requests = RequestController.GetRequests();
+    List<RequestModel> requests = RequestController.GetRequests(
+                                    context.HttpContext.Session.GetString(Variables.Mail),
+                                    (Translator.Access.FirstOrDefault(x => x.Value == context.HttpContext.Session.GetString(Variables.Role)).Key >= 2) ? true : false);
 
     if (requests == null || requests.Count == 0)
     {

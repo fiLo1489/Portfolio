@@ -450,12 +450,12 @@ namespace SemestralnaPraca.Controllers
 
             bool? output = UserController.InsertUser(user);
 
-            if (output == true)
+            if (output == false)
             {
                 LoginAction(mail, Translator.Access[role]);
                 return RedirectToAction("Index", "Home");
             }
-            else if (output == false)
+            else if (output == true)
             {
                 ViewBag.Reply += "účet so zadaným mailom už existuje";
                 return View();

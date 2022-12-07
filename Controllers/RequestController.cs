@@ -5,14 +5,23 @@ namespace SemestralnaPraca.Controllers
 {
     public static class RequestController
     {
-        public static List<RequestModel> GetRequests()
+        public static List<RequestModel> GetRequests(string user, bool admin)
         {
             try
             {
                 List<RequestModel> requests = new List<RequestModel>();
+                string query;
 
-                string query = ("select ID, [USER], CATEGORY, STATUS, DESCRIPTION, " +
+                if (admin)
+                {
+                    query = ("select ID, [USER], CATEGORY, STATUS, DESCRIPTION, " +
                     "FORMAT (CREATED, 'dd/MM/yyyy'), FORMAT (SCHEDULED, 'dd/MM/yyyy'), RESULT from REQUESTS order by SCHEDULED asc");
+                }
+                else
+                {
+                    query = ("select ID, [USER], CATEGORY, STATUS, DESCRIPTION, " +
+                    "FORMAT (CREATED, 'dd/MM/yyyy'), FORMAT (SCHEDULED, 'dd/MM/yyyy'), RESULT from REQUESTS where [USER] = '" + user + "' order by SCHEDULED asc");
+                }
 
                 using (SqlConnection connection = new SqlConnection(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("ConnectionStrings")["Local"]))
                 {
