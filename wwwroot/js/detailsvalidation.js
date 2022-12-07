@@ -38,11 +38,13 @@ form.addEventListener('submit', e =>
 
 	if (passwordValue !== '')
 	{
-		if (base.injectionProtection(passwordValue)) {
+		if (base.injectionProtection(passwordValue))
+		{
 			passwordMessage += 'zadané heslo obashuje nepovolené kľúčové slová, ';
 		}
 
-		if (base.isPasswordValid(passwordValue)) {
+		if (!base.isPasswordValid(passwordValue))
+		{
 			passwordMessage += 'heslo musí obsahovať veľký a malý znak, číslo a bezpečnostný znak (! . & # /), ';
 		}
 	}
