@@ -101,7 +101,7 @@ namespace SemestralnaPraca.Controllers
                     {
                         if (Validator.IsPasswordValid(user.PASSWORD))
                         {
-                            query += (", PASSWORD = '" + user.PASSWORD + "'");
+                            query += (", PASSWORD = '" + GetPassword(user.PASSWORD) + "'");
                         }
                         else
                         {
